@@ -1,0 +1,124 @@
+{
+  "nodes": [
+    {
+      "title": {
+        "name": "Car"
+      },
+      "description": [
+        {
+          "type": "o",
+          "name": "four wheels"
+        },
+        {
+          "type": "i",
+          "name": "nice engine"
+        },
+        {
+          "type": "i",
+          "name": "convertable"
+        },
+        {
+          "type": "i",
+          "name": "driven by somebody!!!!!"
+        }
+      ]
+    },
+    {
+      "title": {
+        "name": "Plane"
+      },
+      "description": [
+        {
+          "name": "fly",
+          "type": "o",
+          "indent": 0
+        },
+        {
+          "name": "faster than cars",
+          "type": "i"
+        },
+        {
+          "name": "more expensive",
+          "type": "i",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "title": {
+        "name": "Movable"
+      },
+      "description": [
+        {
+          "name": "can be moved!",
+          "type": "i",
+          "indent": 0
+        }
+      ]
+    },
+    {
+      "title": {
+        "name": "Tank"
+      },
+      "description": [
+        {
+          "name": "run something over",
+          "type": "o",
+          "indent": 0
+        },
+        {
+          "name": "faster than cars",
+          "type": "i",
+          "indent": 0
+        },
+        {
+          "name": "more expensive",
+          "type": "i",
+          "indent": 0
+        }
+      ]
+    }
+  ],
+
+  "links": [
+    {
+      "source": 0,
+      "source_indicator": {
+        "name": "1"
+      },
+      "target": 2,
+      "target_indicator": {
+        "name": "*"
+      },
+      "link_text": {
+        "name": "some text"
+      }
+    },
+    {
+      "source": 1,
+      "source_indicator": {
+        "name": "*"
+      },
+      "target": 2,
+      "target_indicator": {
+        "name": "1"
+      },
+      "link_text": {
+        "name": "some text"
+      }
+    },
+    {
+      "source": 3,
+      "source_indicator": {
+        "name": "*"
+      },
+      "target": 2,
+      "target_indicator": {
+        "name": "1...*"
+      },
+      "link_text": {
+        "name": "some text"
+      }
+    }
+  ]
+}
