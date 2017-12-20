@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <style>
+        .node {}
+        .link {}
+        .group{}
+
+    </style>
+</head>
+<body>
+<script src="extern/d3v4.js"></script>
+<script src="extern/cola.min.js"></script>
+
+<script>
+    const threshold = 0.1;
+    const width =  1800;
+    const height = 1200;
+    const nodeWidth = 100;
+    const nodeHeight = 100;
+    const pad = 10;
+
+    const color = d3.scaleOrdinal(d3.schemeCategory20);
+
+    const svg = d3.select("body")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const colaForce = cola.d3adaptor(d3)
+        .linkDistance(180)
+        .convergenceThreshold(threshold)
+        .avoidOverlaps(true)
+        .handleDisconnected(false)
+        .size([width, height]);
+
+    d3.json("graphdata/mypowergraph.json", function(error, graph){
+        let nodes = graph.nodes;
+        let  links = graph.links;
+        let  groups = graph.groups;
+
+        // used by cola to compute the size of the group
+        nodes.forEach(
+            function(d){
+                d.width = nodeWidth;
+                d.height = nodeHeight;
+            }
+        );
+
+        let link = svg.selectAll(".link")
+            .data(graph.links)
+            .enter().insert("line", "rect");
+        customizedLink(link);
+
+        let group = svg.selectAll(".group")
+            .data(groups)
+            .enter().append("rect");
+        customizedGroup(group);
+
+        let node = svg.selectAll(".node")
+            .data(graph.nodes)
+            .enter().append("rect");
+        customizedNode(node);
+
+        colaForce.nodes(graph.nodes)
+            .links(graph.links)
+            .groups(groups)
+            .on("tick", tick)
+            .start();
+
+        function tick(){
+            link.attr("x1", function(d){return d.source.x  })
+                .attr("y1", function(d){return d.source.y  })
+                .attr("x2", function(d){return d.target.x})
+                .attr("y2", function(d){return d.target.y});
+
+            node.attr("x", function(d){ return d.x - d.width / 2 + pad;})
+                .attr("y", function(d){ return d.y - d.height / 2 + pad; });
+
+            group.attr("x", function(d){return d.bounds.x })
+                 .attr("y", function(d){return d.bounds.y })
+                 .attr("width", function(d){return d.bounds.width()})
+                 .attr("height", function(d){return d.bounds.height()});
+        }
+
+        function randomInt(l, h) {return l + Math.floor(Math.random() * (h-l)); }
+
+        function add_nodes(d){
+            let children = [];
+            const nNodes = randomInt(1,5);
+            for(let i=0; i !== nNodes; i++){
+                let newNode = {
+                    name: "" + nodes.length,
+                    width: nodeWidth,
+                    height: nodeHeight
+                };
+                nodes.push(newNode);
+                children.push(nodes.length-1);
+                if (i === 0) {
+                    links.push({source:d, target: newNode})
+                }
+            }
+            groups.push({"leaves": children, id:groups.length});
+            update();
+        }
+
+        function customizedNode(node){
+            node
+                .attr("class", "node")
+                .attr("width",  nodeWidth - 2 * pad)
+                .attr("height", nodeHeight - 2 * pad)
+                .attr("fill", color(0))
+                .attr("rx", 10)
+                .attr("ry", 10)
+                .on("click", add_nodes)
+                .call(colaForce.drag);
+            return node;
+        }
+
+        function customizedLink(link){
+            link
+                .attr("class", "link")
+                .attr("stroke", "black");
+            return link;
+        }
+
+        function customizedGroup(group){
+            group
+                .attr("class", "group")
+                .attr("rx", 10)
+                .attr("ry", 10)
+                .attr("fill", (d)=>{return color(d.id+1)})
+                .call(colaForce.drag);
+            return group;
+        }
+
+        function update(){
+            //link
+            link = link.data(links, function(x){ return x.source.name+"->"+x.target.name });
+            link.exit().remove();
+            const linkEnter = link.enter().insert("line", "rect");
+            link = customizedLink(linkEnter).merge(link);
+
+            //group
+            group = group.data(groups, function(x){return x.id});
+            group.exit().remove();
+            const groupEnter = group.enter().append("rect");
+            group = customizedGroup(groupEnter).merge(group);
+
+            //node
+            node = node.data(nodes, function(x){return x.name});
+            node.exit().remove();
+            const nodeEnter = node.enter().append("rect");
+            customizedNode(nodeEnter);
+            node =  customizedNode(nodeEnter).merge(node);
+
+            colaForce
+                .nodes(nodes)
+                .links(links)
+                .groups(groups)
+                .start()
+        }
+    })
+
+</script>
+</body>
+</html>
