@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Composite View</title>
+    <style>
+
+        .background {
+            stroke: white;
+            stroke-width: 1px;
+            fill: white;
+        }
+
+        .node {
+            stroke: black;
+            stroke-width: 1.5px;
+            /*cursor: move;*/
+            fill: none;
+        }
+
+        .titleBox {
+            stroke: black;
+            stroke-width: 1.5;
+            fill: none;
+        }
+
+        .link {
+            fill: none;
+            stroke: #000;
+            stroke-width: 3px;
+            opacity: 0.7;
+            marker-end: url(#end-arrow); /* might be useful*/
+        }
+
+        .title {
+            fill: black;
+            font-family: Verdana;
+            font-size: 25px;
+            text-anchor: middle;
+            font-weight: bold;
+        }
+
+        .objectText {
+            fill: black;
+            font-family: Verdana;
+            font-style: italic;
+            font-size: 20px;
+            text-anchor: left;
+            cursor: move;
+        }
+
+        .informationText {
+            fill: black;
+            font-family: Verdana;
+            font-size: 16px;
+            text-anchor: left;
+            cursor: move;
+        }
+
+        .linkText {
+            fill: black;
+            font-family: Verdana;
+            font-size: 16px;
+            text-anchor: middle;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+<script src="extern/d3v4.js"></script>
+<script src="extern/cola.min.js"></script>
+<script>
+    const d3cola = cola.d3adaptor(d3);
+    const width = 1200, height = 1000;
+    const outer = d3.select("body").append("svg")
+        .attr('width', width)
+        .attr('height', height)
+        .attr('pointer-events', "all");
+
+    // list of constants
+    const PADDING = 10;
+
+    // this is a utility function and probably should be put somewhere else.
+    function getConnectionPoints(rect) {
+        return [{x: rect.x, y: rect.y + rect.height / 2},
+            {x: rect.x + rect.width / 2, y: rect.y},
+            {x: rect.x + rect.width / 2, y: rect.y + rect.height},
+            {x: rect.x + rect.width, y: rect.y + rect.height / 2}
+        ]
+    }
+
+    function starMap(a1, a2) {
+        let result = [];
+        for (let e1 of a1) {
+            for (let e2 of a2) {
+                result.push({p1: e1, p2: e2})
+            }
+        }
+        return result
+    }
+
+    // distance between two points
+    function distance(p1, p2) {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+    }
+
+    outer.append('rect')
+        .attr('class', 'background')
+        .attr('width', "100%")
+        .attr('height', "100%")
+        .call(d3.zoom().on("zoom", redraw));
+
+    const vis = outer
+        .append('g')
+        .attr('transform', 'translate(250,250) scale(0.3)');
+
+    function redraw() {
+        vis.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+    }
+
+    outer.append('svg:defs').append('svg:marker')
+        .attr('id', 'end-arrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 8)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
+        .append('svg:path')
+        .attr('d', 'M0,-5L10,0L0,5L2,0')
+        .attr('stroke-width', '0px')
+        .attr('fill', '#000');
+
+    d3.json("graphdata/composite.json", function (error, _data) {
+        let nodes = _data.nodes;
+
+        // preprocessing the text for indentations
+        nodes.forEach(
+            function (node) {
+                node.description.forEach(
+                    function (d) {
+                        switch (d.type) {
+                            case "i":
+                                d.name = "-\xa0\xa0\xa0\xa0".concat(d.name);  // add indentation
+                                break;
+                            case "o":
+                                break;
+                        }
+                    }
+                )
+            }
+        );
+
+        let links = _data.links;
+        let descriptions = nodes.reduce((x, y) => x.concat(y.description), []);
+        let titles = nodes.map((x) => x.title);
+
+        const link = vis.selectAll(".link")
+            .data(links)
+            .enter().append("line")
+            .attr("class", "link");
+
+        const linkText = vis.selectAll(".linkText")
+            .data(links)
+            .enter().append("text")
+            .text((d)=>d.link_text.name)
+            .attr("class", "linkText");
+
+
+        const linkSourceIndicator = vis.selectAll(".linkSourceIndicator")
+            .data(links)
+            .enter().append("text")
+            .text((d)=>d.source_indicator.name)
+            .attr("class", "linkText")
+            .each(function(d){
+                const bbox = this.getBBox();
+                d.source_indicator.width = bbox.width;
+                d.source_indicator.height = bbox.height;
+            });
+
+        const linkTargetIndicator = vis.selectAll(".linkTargetIndicator")
+            .data(links)
+            .enter().append("text")
+            .text((d)=>d.target_indicator.name)
+            .attr("class", "linkText")
+            .each(function(d){
+                const bbox = this.getBBox();
+                d.target_indicator.width = bbox.width;
+                d.target_indicator.height = bbox.height;
+            });
+
+        const description = vis.selectAll(".description")
+            .data(descriptions)
+            .enter().append("text")
+            .text((x) => x.name)
+            .attr("class", function (d) {
+                switch (d.type) {
+                    case "o":
+                        return "objectText";
+                    case "i":
+                        return "informationText"
+                }
+            })
+            .each(function (d) {
+                const bbox = this.getBBox();
+                d.width = bbox.width;
+                d.height = bbox.height;
+            });
+
+        const title = vis.selectAll(".title")
+            .data(titles)
+            .enter().append("text")
+            .text((x) => x.name)
+            .attr("class", "title")
+            .each(function (d) {
+                const bbox = this.getBBox();
+                d.width = bbox.width;
+                d.height = bbox.height;
+            });
+
+        const titleBox = vis.selectAll(".titleBox")
+            .data(nodes)
+            .enter().append("rect")
+            .attr("class", "titleBox")
+            .each(
+                function (d) {
+                    d.titleBox = {x: 0, y: 0, width: 0, height: 0}
+                }
+            );
+
+        const node = vis.selectAll(".node")
+            .data(nodes)
+            .enter().append("rect")
+            .each(
+                function (d) {
+                    d.width = Math.max(Math.max(...d.description.map((x) => x.width)), d.title.width) + PADDING * 2;
+                    d.height = d.description.reduce((i, d) => i + d.height, 0) + d.title.height + PADDING * 2;
+                }
+            )
+            .attr("class", "node")
+            .attr("width", (d) => d.width)
+            .attr("height", (d) => d.height)
+            .call(d3cola.drag);
+
+        d3cola
+            .avoidOverlaps(true)
+            .convergenceThreshold(1e-2)
+            .size([width, height])
+            .nodes(nodes)
+            .links(links)
+            .flowLayout("x", 50)
+            .linkDistance(340);
+
+        d3cola.start(50, 100, 200).on("tick", function () {
+            node
+                .attr("x", (d) => d.x)
+                .attr("y", (d) => d.y);
+
+            node
+                .each(
+                    function (d) {
+                        let yOffset = d.title.height * 1.2;
+                        // configure titleBox
+                        d.titleBox.x = d.x;
+                        d.titleBox.y = d.y;
+                        d.titleBox.width = d.width;
+                        d.titleBox.height = d.title.height * 1.2;
+
+                        // configure title
+                        d.title.x = d.x + d.width / 2;
+                        d.title.y = d.y + d.title.height;
+                        for (let desc of d.description) {
+                            yOffset += desc.height;
+                            desc.x = d.x + PADDING;
+                            desc.y = d.y + yOffset;
+
+                        }
+                    }
+                );
+
+            link
+                // compute position for links
+                .each(
+                    // set the optimal end points
+                    function (d) {
+                        const ps1 = getConnectionPoints(d.source);
+                        const ps2 = getConnectionPoints(d.target);
+                        const pairs = starMap(ps1, ps2);
+                        //pairs will always have 16 elements
+                        const optimalPair = pairs.reduce((x, y) => distance(x.p1, x.p2) > distance(y.p1, y.p2) ? y : x, pairs[0]);
+                        d.cx1 = optimalPair.p1.x;
+                        d.cy1 = optimalPair.p1.y;
+                        d.cx2 = optimalPair.p2.x;
+                        d.cy2 = optimalPair.p2.y;
+                    }
+                )
+                // compute position for link text
+                .each(
+                    //ToDo use cx1, cy1, cx2, cy2 to place the link text
+                    function(d){
+                        const dx = d.cx2 - d.cx1;
+                        const dy = d.cy2 - d.cy1;
+                        const midpoint = { x:(d.cx1+d.cx2) / 2, y: (d.cy1+d.cy2) / 2 };
+                        d.link_text.x = midpoint.x;
+                        d.link_text.y = midpoint.y;
+
+                    })
+
+                // compute position for source indicator
+                .each(
+                    function(d){
+                        const dx = d.cx2 - d.cx1;
+                        const dy = d.cy2 - d.cy1;
+                        d.source_indicator.x = d.cx1 + dx * 0.15;
+                        d.source_indicator.y = d.cy1 + dy * 0.15;
+                    })
+                // compute positio for target indicator
+                .each(
+                    function(d){
+                        const dx = d.cx2 - d.cx1;
+                        const dy = d.cy2 - d.cy1;
+                        d.target_indicator.x = d.cx1 + dx * 0.85;
+                        d.target_indicator.y = d.cy1 + dy * 0.85;
+
+                    });
+
+            link
+                .attr("x1", (d) => d.cx1)
+                .attr("y1", (d) => d.cy1)
+                .attr("x2", (d) => d.cx2)
+                .attr("y2", (d) => d.cy2);
+
+            linkText
+                .attr("x", (d)=>d.link_text.x)
+                .attr("y", (d)=>d.link_text.y - 10)
+                .attr("transform", function(d){
+                    const cx = (d.cx1 + d.cx2) / 2;
+                    const cy = (d.cy1 + d.cy2) / 2;
+                    const dy = d.cy2 - d.cy1;
+                    const dx = d.cx2 - d.cx1;
+                    const deg = Math.atan2(dy, dx) * 180 / Math.PI;
+                    return "rotate("+deg+","+cx+","+cy+")";
+            });
+
+            linkSourceIndicator
+                .attr("x", (d)=>d.source_indicator.x)
+                .attr("y", (d)=>d.source_indicator.y + d.source_indicator.height)
+                .attr("transform", function(d){
+                    const cx = d.source_indicator.x;
+                    const cy = d.source_indicator.y;
+                    const dy = d.cy2 - d.cy1;
+                    const dx = d.cx2 - d.cx1;
+                    const deg = Math.atan2(dy, dx) * 180 / Math.PI;
+                    return "rotate("+deg+","+cx+","+cy+")";
+                });
+
+            linkTargetIndicator
+                .attr("x", (d)=>d.target_indicator.x)
+                .attr("y", (d)=>d.target_indicator.y + d.target_indicator.height)
+                .attr("transform", function(d){
+                    const cx = d.target_indicator.x;
+                    const cy = d.target_indicator.y;
+                    const dy = d.cy2 - d.cy1;
+                    const dx = d.cx2 - d.cx1;
+                    const deg = Math.atan2(dy, dx) * 180 / Math.PI;
+                    return "rotate("+deg+","+cx+","+cy+")";
+
+                });
+
+            title
+                .attr("x", (d) => d.x)
+                .attr("y", (d) => d.y);
+
+            titleBox
+                .attr("x", (d) => d.titleBox.x)
+                .attr("y", (d) => d.titleBox.y)
+                .attr("width", (d) => d.titleBox.width)
+                .attr("height", (d) => d.titleBox.height);
+
+            description
+                .attr("x", (d) => d.x)
+                .attr("y", (d) => d.y);
+        })
+    });
+</script>
+</body>
+</html>
