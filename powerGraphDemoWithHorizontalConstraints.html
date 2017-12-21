@@ -5,15 +5,9 @@
     <meta charset="utf-8" />
     <title>Power graph representation of a dense graph</title>
     <style>
-        .node {
-
-        }
-        .link {
-
-        }
-        .group{
-
-        }
+        .node {}
+        .link {}
+        .group{}
 
     </style>
 </head>
@@ -100,9 +94,8 @@
         // remove the node being clicked on
         // add
         function expand(d){
-            //if (colaForce.alpha() > threshold) { return }
             let children = [];
-            let newGroup = {"leaves": children, id: groups.length};
+            const newGroup = {"leaves": children, id: groups.length};
             removeBy(nodes, function(x){return x===d});
             const nNodes = randomInt(2,4);
             for(let i=0; i !== nNodes; i++){
@@ -126,12 +119,13 @@
                 }
             );
             groups.push(newGroup);
+
+            //
             updateView()
         }
 
 
         function collapse(d){
-            //if (colaForce.alpha() > threshold) { return }
             const newNode = {name: ""+Math.random(), width:nodeWidth, height:nodeHeight};
             const removed = nodes.filter((x)=>x.group === d);
             nodes = nodes.filter((x)=>x.group !== d);
@@ -146,6 +140,7 @@
                     if (removed.indexOf(x.target) !== -1){ links[i] = {source:x.source.index, target:newNode.index}}
                 }
             );
+            //
             updateView();
         }
 
