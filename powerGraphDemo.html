@@ -62,7 +62,7 @@
 
         let group = svg.selectAll(".group")
             .data(groups)
-            .enter().append("rect");
+            .enter().insert("rect", "rect");
         customizedGroup(group);
 
         let node = svg.selectAll(".node")
@@ -101,18 +101,19 @@
         // remove the node being clicked on
         // add
         function expand(d){
+            //if (colaForce.alpha() > threshold) { return }
             let children = [];
-            let g = {"leaves": children, id:groups.length};
+            let newGroup = {"leaves": children, id:groups.length};
             removeBy(nodes, function(x){return x===d});
-
-            for(let i=0; i !== 4; i++){
+            const nNodes = randomInt(1,5);
+            for(let i=0; i !== nNodes; i++){
                 let newNode = {
                     name: "" + nodes.length,
                     width: nodeWidth,
                     height: nodeHeight,
-                    x: addNoise(d.x, 50),
-                    y: addNoise(d.y, 50),
-                    group:g
+                    // x: addNoise(d.x, 50),
+                    // y: addNoise(d.y, 50),
+                    group: newGroup
                 };
                 nodes.push(newNode);
                 children.push(nodes.length-1);
@@ -125,7 +126,7 @@
                     if (x.target === d){ links[i] = {source:links[i].source, target:last }}
                 }
             );
-            groups.push(g);
+            groups.push(newGroup);
             nodes.forEach(
                 function(x, i){
                     x.index = i;
@@ -136,6 +137,7 @@
 
 
         function collapse(d){
+            //if (colaForce.alpha() > threshold) { return }
             const newNode = {name: ""+Math.random(), width:nodeWidth, height:nodeHeight};
             const removed = nodes.filter((x)=>x.group === d);
             nodes = nodes.filter((x)=>x.group !== d);
@@ -197,7 +199,7 @@
             //group
             group = group.data(groups, function(x){return x.id});
             group.exit().remove();
-            const groupEnter = group.enter().append("rect");
+            const groupEnter = group.enter().insert("rect", "rect");
             group = customizedGroup(groupEnter).merge(group);
 
             //node
