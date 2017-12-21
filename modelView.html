@@ -35,19 +35,19 @@
 <script src="extern/d3v4.js"></script>
 <script src="extern/cola.min.js"></script>
 <script>
-    var width = 1200,
+    const width = 1200,
         height = 600;
 
-    var d3cola = cola.d3adaptor(d3)
+    const d3cola = cola.d3adaptor(d3)
         .linkDistance(120)
         .avoidOverlaps(true)
         .size([width, height]);
 
-    var svg = d3.select("body").append("svg")
+    const svg = d3.select("body").append("svg")
         .attr("width", width)
         .attr("height", height);
 
-    d3.json("graphdata/alignmentconstraints.json", function (error, graph) {
+    d3.json("graphdata/modelViewMockData.json", function (error, graph) {
         graph.nodes.forEach(function (v) {
             v.x = 400;
             v.y = 50
@@ -59,15 +59,15 @@
             .constraints(graph.constraints)
             .start(10,10,10);
 
-        var link = svg.selectAll(".link")
+        const link = svg.selectAll(".link")
             .data(graph.links)
             .enter().append("line")
             .attr("class", "link");
 
-        var color = d3.scaleOrdinal(d3.schemeCategory10);
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
 
         // used to generate the width and height of the boxes
-        var temp = svg.selectAll(".label")
+        const temp = svg.selectAll(".label")
             .data(graph.nodes)
             .enter().append("text")
             .attr("class", "label")
@@ -81,7 +81,7 @@
         // remove these temporary nodes from the svg
         svg.selectAll(".label").data([]).exit().remove();
 
-        var node = svg.selectAll(".node")
+        const node = svg.selectAll(".node")
             .data(graph.nodes)
             .enter().append("rect")
             .attr("class", "node")
@@ -111,7 +111,7 @@
 
             label.attr("x", function (d) { return d.x; })
                 .attr("y", function (d) {
-                    var h = this.getBBox().height;
+                    const h = this.getBBox().height;
                     return d.y + h/4;
                 });
         });
