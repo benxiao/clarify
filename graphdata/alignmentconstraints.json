@@ -1,0 +1,136 @@
+﻿{
+    "nodes":[
+      	{"name":"Mozart", "width":60, "height":40,  "exists":true, "stage": 0},
+      	{"name":"Bach", "width":60, "height":40,  "exists":true, "stage": 1},
+      	{"name":"Chopin", "width":60, "height":40,  "exists":true, "stage": 0},
+      	{"name":"Dovark", "width":60, "height":40,  "exists":false,"stage": 1},
+      	{"name":"Handel", "width":60, "height":40,  "exists":true, "stage": 2},
+		{"name":"Weber", "width":60, "height":40,  "exists":true, "stage": 0},
+		{"name":"Hayden", "width":60, "height":40,  "exists":false,"stage": 1},
+		{"name":"Hilary", "width":60, "height":40,  "exists":true, "stage": 0},
+		{"name":"Ben", "width":60, "height":40,  "exists":false, "stage": 1},
+		{"name":"Steve", "width":60, "height":40,  "exists":true, "stage": 2}
+
+    ],
+    "links":[
+		{"source":0,"target":1},
+		{"source":2,"target":3},
+		{"source":1,"target":4},
+		{"source":3,"target":4},
+		{"source":5, "target":6},
+		{"source":6, "target":4},
+		{"source":7, "target":8},
+		{"source":8, "target":9}
+    ],
+	"constraints":[
+	  	{
+			"type": "alignment",
+			"axis": "x",
+			"offsets": [
+				{
+					"node": "0",
+					"offset": "0"
+				},
+				{
+					"node": "2",
+					"offset": "0"
+				},
+				{
+					"node": "1",
+					"offset": "200"
+				},
+				{
+					"node": "3",
+					"offset": "200"
+				},
+				{
+					"node": "4",
+					"offset": "400"
+				},
+				{
+					"node": "5",
+					"offset": "0"
+				},
+				{
+					"node" : "6",
+					"offset": "200"
+				},
+				{
+					"node" : "7",
+					"offset": "0"
+				},
+				{
+					"node" : "8",
+					"offset": "200"
+				},
+				{
+					"node" : "9",
+					"offset": "400"
+				}
+			]
+		},
+
+		{
+			"type": "alignment",
+			"axis": "y",
+			"offsets": [
+				{
+					"node": "0",
+					"offset": "0"
+				},
+				{
+					"node": "1",
+					"offset": "0"
+				}
+			]
+		},
+
+
+		{
+			"type": "alignment",
+			"axis": "y",
+			"offsets": [
+				{
+					"node": "2",
+					"offset": "0"
+				},
+				{
+					"node": "3",
+					"offset": "0"
+				}
+			]
+		},
+		{
+			"type": "alignment",
+			"axis": "y",
+			"offsets": [
+				{
+					"node": "5",
+					"offset": "0"
+				},
+				{
+					"node": "6",
+					"offset": "0"
+				}
+			]
+		},
+		{
+			"type": "alignment",
+			"axis": "y",
+			"offsets": [
+				{
+					"node": "7",
+					"offset": "0"
+				},
+				{
+					"node": "8",
+					"offset": "0"
+				},
+				{
+					"node": "9",
+					"offset": "0"
+				}
+			]
+		}
+	]
+}
