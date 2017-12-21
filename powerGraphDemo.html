@@ -19,14 +19,14 @@
 </head>
 <body>
 <script src="extern/d3v4.js"></script>
-<script src="extern/cola.min.js"></script>
+<script src="extern/cola.js"></script>
 
 <script>
     const threshold = 0.1;
     const width =  1800;
     const height = 1200;
     const nodeWidth = 100;
-    const nodeHeight = 100;
+    const nodeHeight = 60;
     const pad = 10;
 
     const color = d3.scaleOrdinal(d3.schemeCategory20);
@@ -42,10 +42,11 @@
         .avoidOverlaps(true)
         .size([width, height]);
 
-    d3.json("graphdata/mypowergraph.json", function(error, graph){
+    d3.json("graphdata/powerGraphData.json", function(error, graph){
         let nodes = graph.nodes;
-        let  links = graph.links;
-        let  groups = graph.groups;
+        let links = graph.links;
+        let groups = graph.groups;
+        //let constraints = graph.constraints;
 
         // used by cola to compute the size of the group
         nodes.forEach(
@@ -71,12 +72,6 @@
         customizedNode(node);
 
 
-        colaForce.nodes(nodes)
-            .links(links)
-            .groups(groups)
-            .on("tick", tick)
-            .start(10, 10, 10);
-
         function tick(){
             link.attr("x1", function(d){return d.source.x  })
                 .attr("y1", function(d){return d.source.y  })
@@ -92,6 +87,10 @@
                 .attr("height", function(d){return d.bounds.height()});
         }
 
+        // run the simulation for the very first time
+        updateView();
+
+
         function addNoise(x, noise){return x + Math.random() * noise - 2 * noise; }
 
         function randomInt(l, h) {return l + Math.floor(Math.random() * (h-l)); }
@@ -103,7 +102,7 @@
         function expand(d){
             //if (colaForce.alpha() > threshold) { return }
             let children = [];
-            let newGroup = {"leaves": children, id:groups.length};
+            let newGroup = {"leaves": children, id: groups.length};
             removeBy(nodes, function(x){return x===d});
             const nNodes = randomInt(2,4);
             for(let i=0; i !== nNodes; i++){
@@ -123,7 +122,7 @@
             links.forEach(
                 function(x, i){
                     if (x.source === d){ links[i] = {source:last, target:links[i].target}}
-                    if (x.target === d){ links[i] = {source:links[i].source, target:last }}
+                    if (x.target === d){ links[i] = {source:links[i].source, target: last }}
                 }
             );
             groups.push(newGroup);
@@ -207,7 +206,9 @@
             colaForce
                 .nodes(nodes)
                 .links(links)
-                .groups(groups);
+                .groups(groups)
+                //constraints(constraints)
+                .on("tick", tick);
             colaForce.start()
         }
     })
