@@ -2,12 +2,17 @@
 
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8"/>
     <title>Power graph representation of a dense graph</title>
     <style>
-        .node {}
-        .link {}
-        .group{}
+        .node {
+        }
+
+        .link {
+        }
+
+        .group {
+        }
 
     </style>
 </head>
@@ -17,14 +22,12 @@
 
 <script>
     const threshold = 0.1;
-    const width =  1800;
+    const width = 1800;
     const height = 1200;
     const nodeWidth = 120;
     const nodeHeight = 80;
     const pad = 10;
-
     const color = d3.scaleOrdinal(d3.schemeCategory20);
-
     const svg = d3.select("body")
         .append("svg")
         .attr("width", width)
@@ -36,15 +39,16 @@
         .avoidOverlaps(true)
         .size([width, height]);
 
-    d3.json("graphdata/powerGraphData.json", function(error, graph){
+    d3.json("graphdata/powerGraphData.json", function (error, graph) {
         let nodes = graph.nodes;
         let links = graph.links;
         let groups = graph.groups;
+        let constraints = graph.constraints;
         //let constraints = graph.constraints;
 
         // used by cola to compute the size of the group
         nodes.forEach(
-            function(d){
+            function (d) {
                 d.width = nodeWidth;
                 d.height = nodeHeight;
             }
@@ -66,39 +70,65 @@
         customizedNode(node);
 
 
-        function tick(){
-            link.attr("x1", function(d){return d.source.x  })
-                .attr("y1", function(d){return d.source.y  })
-                .attr("x2", function(d){return d.target.x})
-                .attr("y2", function(d){return d.target.y});
+        function tick() {
+            link.attr("x1", function (d) {
+                return d.source.x
+            })
+                .attr("y1", function (d) {
+                    return d.source.y
+                })
+                .attr("x2", function (d) {
+                    return d.target.x
+                })
+                .attr("y2", function (d) {
+                    return d.target.y
+                });
 
-            node.attr("x", function(d){ return d.x - d.width / 2 + pad;})
-                .attr("y", function(d){ return d.y - d.height / 2 + pad; });
+            node.attr("x", function (d) {
+                return d.x - d.width / 2 + pad;
+            })
+                .attr("y", function (d) {
+                    return d.y - d.height / 2 + pad;
+                });
 
-            group.attr("x", function(d){return d.bounds.x })
-                .attr("y", function(d){return d.bounds.y })
-                .attr("width", function(d){return d.bounds.width()})
-                .attr("height", function(d){return d.bounds.height()});
+            group.attr("x", function (d) {
+                return d.bounds.x
+            })
+                .attr("y", function (d) {
+                    return d.bounds.y
+                })
+                .attr("width", function (d) {
+                    return d.bounds.width()
+                })
+                .attr("height", function (d) {
+                    return d.bounds.height()
+                });
         }
 
         // run the simulation for the very first time
         updateView();
 
 
-        function addNoise(x, noise){return x + Math.random() * noise - 2 * noise; }
+        //function addNoise(x, noise){return x + Math.random() * noise - 2 * noise; }
 
-        function randomInt(l, h) {return l + Math.floor(Math.random() * (h-l)); }
+        function randomInt(l, h) {
+            return l + Math.floor(Math.random() * (h - l));
+        }
 
-        function removeBy(l, func){ return l.splice(l.findIndex(func), 1) }
+        function removeBy(l, func) {
+            return l.splice(l.findIndex(func), 1)
+        }
 
         // remove the node being clicked on
         // add
-        function expand(d){
+        function expand(d) {
             let children = [];
             const newGroup = {"leaves": children, id: groups.length};
-            removeBy(nodes, function(x){return x===d});
-            const nNodes = randomInt(2,4);
-            for(let i=0; i !== nNodes; i++){
+            removeBy(nodes, function (x) {
+                return x === d
+            });
+            const nNodes = randomInt(2, 4);
+            for (let i = 0; i !== nNodes; i++) {
                 let newNode = {
                     name: "" + nodes.length,
                     width: nodeWidth,
@@ -108,95 +138,116 @@
                     group: newGroup
                 };
                 nodes.push(newNode);
-                children.push(nodes.length-1);
+                children.push(nodes.length - 1);
             }
-            const last = nodes[nodes.length-1];
+            const last = nodes[nodes.length - 1];
             const nLinks = links.length;
             links.forEach(
-                function(x, i){
-                    if (x.source === d){ links[i] = {source:last, target:links[i].target}}
-                    if (x.target === d){ links[i] = {source:links[i].source, target: last }}
+                function (x, i) {
+                    if (x.source === d) {
+                        links[i] = {source: last, target: links[i].target}
+                    }
+                    if (x.target === d) {
+                        links[i] = {source: links[i].source, target: last}
+                    }
                 }
             );
             groups.push(newGroup);
-
             //
             updateView()
         }
 
 
-        function collapse(d){
-            const newNode = {name: ""+Math.random(), width:nodeWidth, height:nodeHeight};
-            const removed = nodes.filter((x)=>x.group === d);
-            nodes = nodes.filter((x)=>x.group !== d);
+        function collapse(d) {
+            const newNode = {name: "" + Math.random(), width: nodeWidth, height: nodeHeight};
+            const removed = nodes.filter((x) => x.group === d);
+            nodes = nodes.filter((x) => x.group !== d);
             nodes.push(newNode);
-            groups = groups.filter((x)=>x!==d);
+            groups = groups.filter((x) => x !== d);
             nodes.forEach(
-                function(x, i){ x.index =i;}
+                function (x, i) {
+                    x.index = i;
+                }
             );
             links.forEach(
-                function(x, i){
-                    if (removed.indexOf(x.source) !== -1){ links[i] = {source:newNode.index, target:x.target.index}}
-                    if (removed.indexOf(x.target) !== -1){ links[i] = {source:x.source.index, target:newNode.index}}
+                function (x, i) {
+                    if (removed.indexOf(x.source) !== -1) {
+                        links[i] = {source: newNode.index, target: x.target.index}
+                    }
+                    if (removed.indexOf(x.target) !== -1) {
+                        links[i] = {source: x.source.index, target: newNode.index}
+                    }
                 }
             );
             //
             updateView();
         }
 
-        function customizedNode(node){
+        function customizedNode(node) {
             node
                 .attr("class", "node")
-                .attr("width",  nodeWidth - 2 * pad)
+                .attr("width", nodeWidth - 2 * pad)
                 .attr("height", nodeHeight - 2 * pad)
                 .attr("fill", color(0))
                 .attr("rx", 10)
                 .attr("ry", 10)
-                .on("click", function(d){
-                    if (d.group === undefined){ expand(d) }
-                    else {collapse(d.group)}
+                .on("click", function (d) {
+                    if (d.group === undefined) {
+                        expand(d)
+                    }
+                    else {
+                        collapse(d.group)
+                    }
                 })
                 .call(colaForce.drag);
             return node;
         }
 
-        function customizedLink(link){
+        function customizedLink(link) {
             link
                 .attr("class", "link")
                 .attr("stroke", "black");
             return link;
         }
 
-        function customizedGroup(group){
+        function customizedGroup(group) {
             group
                 .attr("class", "group")
                 .attr("rx", 10)
                 .attr("ry", 10)
-                .attr("fill", (d)=>{return color(d.id+1)})
+                .attr("fill", (d) => {
+                    return color(d.id + 1)
+                })
                 .on("click", collapse)
                 .call(colaForce.drag);
             return group;
         }
 
-        function updateView(){
+        function updateView() {
             //link
-            link = link.data(links, function(x){ return x.source.name+"->"+x.target.name });
+            link = link.data(links, function (x) {
+                return x.source.name + "->" + x.target.name
+            });
             link.exit().remove();
             const linkEnter = link.enter().insert("line", "rect");
             link = customizedLink(linkEnter).merge(link);
 
             //group
-            group = group.data(groups, function(x){return x.id});
+            group = group.data(groups, function (x) {
+                return x.id
+            });
             group.exit().remove();
             const groupEnter = group.enter().insert("rect", "rect.node");
             group = customizedGroup(groupEnter).merge(group);
 
             //node
-            node = node.data(nodes, function(x){return x.name});
+            node = node.data(nodes, function (x) {
+                return x.name
+            });
             node.exit().remove();
             const nodeEnter = node.enter().append("rect");
             customizedNode(nodeEnter);
-            node =  customizedNode(nodeEnter).merge(node);
+            node = customizedNode(nodeEnter).merge(node);
 
             colaForce
                 .nodes(nodes)
