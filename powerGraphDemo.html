@@ -37,7 +37,7 @@
         .attr("height", height);
 
     const colaForce = cola.d3adaptor(d3)
-        .linkDistance(240)
+        .linkDistance(300)
         .convergenceThreshold(threshold)
         .avoidOverlaps(true)
         .size([width, height]);
@@ -57,12 +57,12 @@
 
         let link = svg.selectAll(".link")
             .data(graph.links)
-            .enter().insert("line", "rect");
+            .enter().insert("line", "rect.group");
         customizedLink(link);
 
         let group = svg.selectAll(".group")
             .data(groups)
-            .enter().insert("rect", "rect");
+            .enter().insert("rect", "rect.node");
         customizedGroup(group);
 
         let node = svg.selectAll(".node")
@@ -75,7 +75,7 @@
             .links(links)
             .groups(groups)
             .on("tick", tick)
-            .start();
+            .start(10, 10, 10);
 
         function tick(){
             link.attr("x1", function(d){return d.source.x  })
@@ -105,14 +105,14 @@
             let children = [];
             let newGroup = {"leaves": children, id:groups.length};
             removeBy(nodes, function(x){return x===d});
-            const nNodes = randomInt(1,5);
+            const nNodes = randomInt(2,4);
             for(let i=0; i !== nNodes; i++){
                 let newNode = {
                     name: "" + nodes.length,
                     width: nodeWidth,
                     height: nodeHeight,
-                    // x: addNoise(d.x, 50),
-                    // y: addNoise(d.y, 50),
+                    x: d.x,
+                    y: d.y,
                     group: newGroup
                 };
                 nodes.push(newNode);
@@ -127,11 +127,6 @@
                 }
             );
             groups.push(newGroup);
-            nodes.forEach(
-                function(x, i){
-                    x.index = i;
-                }
-            );
             updateView()
         }
 
@@ -199,7 +194,7 @@
             //group
             group = group.data(groups, function(x){return x.id});
             group.exit().remove();
-            const groupEnter = group.enter().insert("rect", "rect");
+            const groupEnter = group.enter().insert("rect", "rect.node");
             group = customizedGroup(groupEnter).merge(group);
 
             //node
@@ -215,7 +210,6 @@
                 .groups(groups);
             colaForce.start()
         }
-
     })
 
 </script>
