@@ -1,30 +1,31 @@
 ﻿{
   "nodes": [
     {
-      "name": "0"
+      "name": "AdventureWorks AAA"
     },
     {
-      "name": "1"
+      "name": "AwPurchasing"
     },
     {
-      "name": "2",
+      "name": "AwSales",
       "children": [
         {
-          "name": "2a"
+          "name": "AwEmployee"
         },
         {
-          "name": "2b"
+          "name": "AwOrgStructure"
         },
         {
-          "name": "2c"
+          "name": "AwPerson"
         }
+
       ]
     },
     {
-      "name": "3"
+      "name": "AdventureGear", "children":[{"name":"3a"}, {"name":"3b"}, {"name":"3c"}]
     },
     {
-      "name": "4", "children":[{"name":"4a"}, {"name":"4b"}]
+      "name": "AdventureGroup", "children":[{"name":"4a"}, {"name":"4b"}]
     },
     {
       "name": "5"

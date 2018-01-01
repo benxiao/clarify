@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Power graph representation of a dense graph</title>
+            <title>Interactive Power Graph</title>
     <style>
         .background {
             stroke: gray;
@@ -15,7 +15,6 @@
             stroke: #fff;
             stroke-width: 1.5px;
             cursor: move;
-            fill: #550000;
         }
 
         .group {
@@ -35,7 +34,7 @@
         .label {
             fill: white;
             font-family: Verdana;
-            font-size: 25px;
+            font-size: 15px;
             text-anchor: middle;
             cursor: move;
         }
@@ -53,10 +52,12 @@
     const width = 1200,
         height = 800;
     const margin = 10;
-    const nodeWidth = 100;
-    const nodeHeight = 100;
-    const childNodeWidth = 90;
-    const childNodeHeight = 90;
+    let nodeWidth = 130; // placeholder, will be changed later
+
+    const nodeHeight = 80;
+    let childNodeWidth = nodeWidth * 0.9;
+    const childNodeHeight = nodeHeight * 0.9;
+    const jsonfile = "graphdata/n7e25.json";
 
     const color = d3.scaleOrdinal(d3.schemeCategory20);
     const d3cola = cola.d3adaptor(d3);
@@ -94,6 +95,7 @@
             .attr("width", function (d) { return d.width + 2 * margin; })
             .attr("height", function (d) { return d.height + 2 * margin; })
             .attr("rx", 8).attr("ry", 8)
+            .attr("fill", function(x){ return x.children ? "#7f7f7f" : "#f7b6d2"})
             .on("click", nodeClickHandler)
             .call(d3cola.drag);
         node.append("title")
@@ -122,29 +124,26 @@
             .attr("rx", 8)
             .attr("ry", 8)
             .attr("class", "group")
-            .each(
-                function(g){
-                    g.padding = 20;
-                }
-            )
+            .each( function(g){ g.padding = 20; } )
             .call(d3cola.drag)
             .style("fill", function (d, i) { return color(i); });
         return group;
     }
-
-
 
     function initial_layout() {
 
         d3cola
             .jaccardLinkLengths(10, 0.5)
             .avoidOverlaps(true)
-            .flowLayout("x", 100)
+            .flowLayout("x", 200)
             .size([width, height]);
 
         const svg = makeSVG();
 
-        d3.json("graphdata/n7e24.json", function (error, graph) {
+        d3.json(jsonfile, function (error, graph) {
+
+
+
             debugger;
             /*
 
@@ -153,6 +152,20 @@
             that allow you capture the references of the generated groups and so-called power edges
              */
             nodes = graph.nodes;
+
+            // find the width for all nodes
+            const temp = svg.selectAll(".temp")
+                .data(nodes)
+                .enter().append("text")
+                .text(function(x){ return x.name })
+                .attr("class", "label")
+                .each(
+                    function(d){
+                        const textBox = this.getBBox();
+                        if (childNodeWidth < textBox.width + 2 * margin){ childNodeWidth = textBox.width + 2 * margin }
+                    });
+            temp.data([]).exit().remove();
+            nodeWidth = childNodeWidth * 1.1;
 
             nodes.forEach(
                 function(x){
@@ -180,8 +193,6 @@
                 .enter().append("line");
             customizedLink(link);
 
-
-
             node = svg.selectAll(".node")
                 .data(nodes)
                 .enter().append("rect");
@@ -192,8 +203,6 @@
                 .data(nodes)
                 .enter().append("text");
             customizedLabel(label);
-
-
 
 
             d3cola.on("tick", function () {
@@ -259,6 +268,7 @@
 
     function nodeExpand(d){
         //remove the node is clicked on
+
         removeBy(nodes, function(x){ return d.name === x.name});
         let newNodes = d.children;
         d.children.forEach(
@@ -334,7 +344,7 @@
         const nodeEnter = node.enter().append("rect");
         node =  customizedNode(nodeEnter).merge(node);
 
-        debugger
+        //debugger
         label = label.data(nodes, function(x){return x.name});
         label.exit().remove();
         const labelEnter = label.enter().append("text");
