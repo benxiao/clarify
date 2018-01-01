@@ -10,19 +10,7 @@
       "name": "2",
       "children": [
         {
-          "name": "2a",
-          "children": [
-            {
-              "name": "2aa", "children":[{"name":"2aaa"}, {"name":"2aab"}, {"name":"2aac"}]
-            },
-            {
-              "name": "2ab"
-            },
-            {
-              "name":"2ac"
-            },
-            {"name": "2ad"}
-          ]
+          "name": "2a"
         },
         {
           "name": "2b"
@@ -36,7 +24,7 @@
       "name": "3"
     },
     {
-      "name": "4"
+      "name": "4", "children":[{"name":"4a"}, {"name":"4b"}]
     },
     {
       "name": "5"
