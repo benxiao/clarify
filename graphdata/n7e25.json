@@ -25,10 +25,10 @@
       "name": "AdventureGear", "children":[{"name":"avl tree"}, {"name":"2-3-4 tree"}, {"name":"red black tree"}]
     },
     {
-      "name": "AdventureGroup", "children":[{"name":"shortest path"}, {"name":"dynamic programming AAAAA"}]
+      "name": "AdventureGroup", "children":[{"name":"shortest path"}, {"name":"dynamic programming"}]
     },
     {
-      "name": "5", "children":[{"name":"open addressing"}, {"name":"separate chaining"}, {"name":"aaav"}]
+      "name": "AdventureInsurance", "children":[{"name":"open addressing"}, {"name":"separate chaining"}, {"name":"aaav"}]
     }
   ],
   "links": [
