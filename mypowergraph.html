@@ -119,6 +119,16 @@
         return link;
     }
 
+    function flatten(nodes, all_nodes){
+        nodes.map(function(x){
+            all_nodes.push(x);
+            if (x.children !== undefined){
+                flatten(x.children, all_nodes);
+            }
+        })
+    }
+
+
     function customizedGroup(group){
         group
             .attr("rx", 8)
@@ -142,36 +152,31 @@
 
         d3.json(jsonfile, function (error, graph) {
 
-
-
-            debugger;
             /*
-
-
             powerGraphGroups is a callback function (hack)
             that allow you capture the references of the generated groups and so-called power edges
              */
             nodes = graph.nodes;
 
             // find the width for all nodes
+            let allNodes = [];
+            flatten(nodes, allNodes);
             const temp = svg.selectAll(".temp")
-                .data(nodes)
+                .data(allNodes)
                 .enter().append("text")
                 .text(function(x){ return x.name })
                 .attr("class", "label")
                 .each(
                     function(d){
                         const textBox = this.getBBox();
-                        if (childNodeWidth < textBox.width + 2 * margin){ childNodeWidth = textBox.width + 2 * margin }
+                        d.width = textBox.width + 4 * margin;
                     });
             temp.data([]).exit().remove();
             nodeWidth = childNodeWidth * 1.1;
 
+
             nodes.forEach(
-                function(x){
-                    x.width = nodeWidth;
-                    x.height = nodeHeight;
-                }
+                function(x){ x.height = nodeHeight; }
             );
             links = graph.links;
 
@@ -234,7 +239,6 @@
                         return d.y + h / 3.5;
 
                     });
-
             });
 
         });
@@ -271,9 +275,11 @@
 
         removeBy(nodes, function(x){ return d.name === x.name});
         let newNodes = d.children;
+        let _width = d.children.map((x)=>x.width).reduce(function(x,y){ return Math.max(x,y)}, 0);
+
         d.children.forEach(
             function(x){
-                x.width =childNodeWidth;
+                x.width =_width;
                 x.height=childNodeHeight;
                 x.parent_ = d;
             }
@@ -320,7 +326,6 @@
             .nodes(nodes)
             .links(links)
             .powerGraphGroups(function(d){ // only to be called once
-                //debugger
                 powerGraph = d;
                 powerGraph.groups.forEach( function(g){ g.padding = 20; })
             });

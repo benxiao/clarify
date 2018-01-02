@@ -22,13 +22,13 @@
       ]
     },
     {
-      "name": "AdventureGear", "children":[{"name":"3a"}, {"name":"3b"}, {"name":"3c"}]
+      "name": "AdventureGear", "children":[{"name":"avl tree"}, {"name":"2-3-4 tree"}, {"name":"red black tree"}]
     },
     {
-      "name": "AdventureGroup", "children":[{"name":"4a"}, {"name":"4b"}]
+      "name": "AdventureGroup", "children":[{"name":"shortest path"}, {"name":"dynamic programming AAAAA"}]
     },
     {
-      "name": "5"
+      "name": "5", "children":[{"name":"open addressing"}, {"name":"separate chaining"}, {"name":"aaav"}]
     }
   ],
   "links": [
