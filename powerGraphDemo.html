@@ -32,6 +32,7 @@
     const colaForce = cola.d3adaptor(d3)
         .linkDistance(300)
         .convergenceThreshold(threshold)
+        .flowLayout("x", 200)
         .avoidOverlaps(true)
         .size([width, height]);
 
@@ -114,8 +115,8 @@
             const nLinks = links.length;
             links.forEach(
                 function(x, i){
-                    if (x.source === d){ links[i] = {source:last, target:links[i].target}}
-                    if (x.target === d){ links[i] = {source:links[i].source, target: last }}
+                    if (x.source === d){ links[i] = {source: last, target:links[i].target }}
+                    if (x.target === d){ links[i] = {source: links[i].source, target: last }}
                 }
             );
             groups.push(newGroup);

@@ -16,6 +16,14 @@
             fill: white;
         }
 
+        .valueObject {
+            stroke: black;
+            stroke-width: 2px;
+            cursor: move;
+            fill: white;
+            stroke-dasharray: 10, 10, 10, 10;
+        }
+
         .fact {
             fill: none;
             stroke: black;
@@ -68,7 +76,9 @@
 <script src="extern/d3v4.js"></script>
 <script src="extern/cola.js"></script>
 <script>
-    const d3cola = cola.d3adaptor(d3).convergenceThreshold(0.1);
+    const d3cola = cola.d3adaptor(d3)
+        .convergenceThreshold(0.1);
+    //.flowLayout("x", 200);
 
     /* should be put into a separate file for code organization*/
 
@@ -161,10 +171,6 @@
                 }
                 return result;
             });
-        // const y_aligned_constraints = facts.map(
-        //
-        //
-        // )
         return constraints.concat(x_aligned_constraints);
     }
 
@@ -218,8 +224,7 @@
             x.index = i
         });
         const constraints = generate_constraints(json);
-        debugger
-        const _objects = nodes.filter((x) => x.type === "object");
+        const _objects = nodes.filter((x) => x.type.indexOf("object") !== -1);
         const _facts = nodes.filter((x) => x.type === "fact");
         const _namedfacts = nodes.filter((x) => {
             return x.type === "fact" & x.named === true
@@ -227,7 +232,7 @@
         const roleboxes = new Array(_facts.map((x) => x.roles).reduce((x, y) => x + y, 0));
 
         // need to be refactored later
-        for (let i = 0; i != roleboxes.length; i++) {
+        for (let i = 0; i !== roleboxes.length; i++) {
             d = {};
             d.x = 0;
             d.y = 0;
@@ -238,7 +243,7 @@
         let i = 0;
         for (let x of _facts) {
             x.roleboxes = [];
-            for (let y = 0; y != x.roles; y++) {
+            for (let y = 0; y !== x.roles; y++) {
                 x.roleboxes.push(roleboxes[i]);
                 i++;
             }
@@ -281,10 +286,13 @@
         const _object = vis.selectAll(".object")
             .data(_objects)
             .enter().append("rect")
-            .attr("class", "object")
             .attr('rx', 5)
             .attr('ry', 5)
             .call(d3cola.drag);
+
+        _object.filter((d) => d.type === "object.value").attr("class", "valueObject");
+        _object.filter((d) => d.type === "object").attr("class", "object");
+
 
         // text that describe object
         const _objectLabel = vis.selectAll(".objectLabel")
@@ -301,7 +309,6 @@
                 d.width = b.width + extra;
                 d.height = b.height + extra;
             });
-
 
 
         // boxes equally divided facts
