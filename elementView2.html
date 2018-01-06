@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>fact based modeling (elemental view)</title>
+    <style>
+        .background {
+            stroke: white;
+            stroke-width: 1px;
+            fill: white;
+        }
+
+        .object {
+            stroke: black;
+            stroke-width: 1.5px;
+            cursor: move;
+            fill: white;
+        }
+
+        .valueObject {
+            stroke: black;
+            stroke-width: 2px;
+            cursor: move;
+            fill: white;
+            stroke-dasharray: 10, 10, 10, 10;
+        }
+
+        .fact {
+            fill: none;
+            stroke: black;
+            stroke-width: 3px;
+        }
+
+        .factNamedFactBox {
+            stroke: black;
+            stroke-width: 3px;
+            fill: none;
+        }
+
+        .factRoleBox {
+            stroke: black;
+            stroke-width: 3px;
+            fill: none;
+        }
+
+        .link {
+            fill: none;
+            stroke: black;
+            stroke-width: 3px;
+            /*marker-end: url(#end-arrow);*/
+        }
+
+        .linkEndPoint {
+            fill: blueviolet;
+        }
+
+        .objectLabel {
+            fill: black;
+            font-family: Verdana;
+            font-size: 25px;
+            text-anchor: middle;
+            cursor: move;
+        }
+
+        .factLabel {
+            fill: black;
+            font-family: Verdana;
+            font-size: 18px;
+            text-anchor: middle;
+            cursor: move;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Elemental View</h1>
+<script src="extern/d3v4.js"></script>
+<script src="extern/cola.js"></script>
+<script>
+
+    const svg = d3.select("body").append("svg").attr("width", 800).attr("height", 600);
+    const d3cola = cola.d3adaptor(d3)
+        .convergenceThreshold(0.1)
+        .linkDistance(9)
+        .avoidOverlaps(true);
+    const nodes = [{name: "A"}, {name: "B"}, {name: "D"}];
+    const links = [{source: 0, target: 1}, {source: 1, target: 2}];
+    const nodeGroup = svg.selectAll(".node")
+        .data(nodes)
+        .enter().append("g")
+        .each(
+            function(d){
+                d.width=50;
+                d.height=50;
+            }
+        )
+        .call(d3cola.drag);
+
+
+
+
+    nodeGroup.append("rect")
+        .attr("width", 50)
+        .attr("height", 50)
+        .attr("rx", 5)
+        .attr("ry", 5)
+        .attr("fill", "white");
+
+    nodeGroup.append("rect")
+        .attr("width", 30)
+        .attr("height",30)
+        .attr("x", 10)
+        .attr('y', 20)
+        .attr("stroke","black")
+        .attr("fill", "red")
+        .attr("rx", 5)
+        .attr("ry", 5);
+
+
+    nodeGroup.append("text")
+        .attr("dx", function(d){ return (d.width/2)})
+        .attr("dy", 20)
+        .attr("class", "objectLabel")
+        .text(function(d){ return d.name; });
+
+    const link = svg.selectAll(".link")
+        .data(links)
+        .enter().append("line")
+        .attr("stroke", "black");
+
+    d3cola
+        .size([800, 600])
+        .nodes(nodes)
+        .links(links)
+        .on("tick", function () {
+            // nodeGroup
+            //     .attr("x", d => d.x - d.width/2)
+            //     .attr("y", d => d.y - d.height/2);
+            nodeGroup
+                 .attr("transform", function(d){ return "translate("+(d.x)+","+(d.y)+")"});
+            link
+                .attr("x1", (d) => d.source.x + 25)
+                .attr("y1", (d) => d.source.y + 25)
+                .attr("x2", (d) => d.target.x + 25)
+                .attr("y2", (d) => d.target.y + 25);
+        })
+        .start()
+
+</script>
+</body>
+</html>

@@ -77,8 +77,8 @@
 <script src="extern/cola.js"></script>
 <script>
     const d3cola = cola.d3adaptor(d3)
-        .convergenceThreshold(0.1);
-    //.flowLayout("x", 200);
+        .convergenceThreshold(0.1)
+        .jaccardLinkLengths(130, 0.2);
 
     /* should be put into a separate file for code organization*/
 
@@ -121,9 +121,8 @@
      generate constraints
      assume the root node is the first node
     */
-    function generate_constraints(json) {
-        const nodes = json.nodes;
-        const links = json.links;
+    function generate_constraints(nodes, links) {
+        debugger
         let constraints = [];
         const facts = nodes.filter((x) => x.type === "fact");
         const LEFT = 0, RIGHT = 1;
@@ -131,6 +130,7 @@
             const i = findIndex(links, function (l) {
                 return l.target == fact.id & l.source == 0;
             });
+            debugger
             return links[i].role <= fact.roles / 2 ? RIGHT : LEFT;
         });
 
@@ -216,14 +216,38 @@
         .attr('stroke-width', '0px')
         .attr('fill', '#000');
 
-    d3.json("graphdata/elementalViewMockData.json", function (error, json) {
+
+
+    function setNodesAndLinks(json, nodes, links){
+        // nodes.push({name: json.object, type:"object"});
+        for(let f of json){
+            const rolesInAFact =f.reads[0].roles;
+            const factNode = {name:f.name, type:"fact", roles:rolesInAFact.length};
+            debugger
+            nodes.push(factNode);
+            rolesInAFact.forEach(
+                function(r, i){
+                    if (nodes.findIndex((x)=>x.name === r) === -1){
+                        nodes.push({name: r, type:"object"});
+                    }
+                    links.push({source: nodes.findIndex((x)=> x.name === r),
+                        target: nodes.findIndex((x)=>x.name === factNode.name), "role":i+1})
+                }
+            );
+        }
+    }
+
+    d3.json("graphdata/elementalViewMockData2.json", function (error, json) {
+
         const margin = 10, pad = 12;
-        const nodes = json.nodes;
-        const links = json.links;
+        const nodes = [];
+        const links = [];
+        setNodesAndLinks(json, nodes, links);
+
         nodes.forEach(function (x, i) {
             x.index = i
         });
-        const constraints = generate_constraints(json);
+        //const constraints = generate_constraints(nodes, links);
         const _objects = nodes.filter((x) => x.type.indexOf("object") !== -1);
         const _facts = nodes.filter((x) => x.type === "fact");
         const _namedfacts = nodes.filter((x) => {
@@ -254,9 +278,8 @@
             .convergenceThreshold(1e-3)
             .size([width, height])
             .nodes(nodes)
-            .links(links)
-            .constraints(constraints)
-            .linkDistance(130);
+            .links(links);
+            //.constraints(constraints)
 
         const temp = vis.selectAll(".objectLabel")
             .data(_objects)
