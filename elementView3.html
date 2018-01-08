@@ -56,7 +56,7 @@
         .objectLabel {
             fill: black;
             font-family: Verdana;
-            font-size: 13px;
+            font-size: 8px;
             text-anchor: middle;
             cursor: move;
         }
@@ -64,7 +64,7 @@
         .factLabel {
             fill: black;
             font-family: Verdana;
-            font-size: 14px;
+            font-size: 1px;
             text-anchor: middle;
             cursor: move;
         }
@@ -77,7 +77,9 @@
 <script src="extern/cola.js"></script>
 <script>
 
-    const svg = d3.select("body").append("svg").attr("width", 800).attr("height", 600);
+    const visWidth =800;
+    const visHeight = 600;
+    const svg = d3.select("body").append("svg").attr("width", visWidth).attr("height", visHeight);
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
         .jaccardLinkLengths(160, 0.5)
@@ -89,168 +91,187 @@
     const innerPadding = 5;
     const outerPadding = 25;
     const roundCorner = 5;
+    let rerun = true;
 
-    const nodes = [{name: "route", type: "fact", roles: 4, description:".. is of .."}, {name: "ABAAA", type: "object"}, {
-        name: "AVA",
-        type: "object"
-    }, {name: "FTF", type: "object"}, {name: "FTV", type: "object"}, {name: "GGV", type: "object"},
-        {name: "meltdown", type:"fact", roles:5, description:".. has .."},
-        {name: "schedule", type:"fact", roles:3, description:"do .. on .. at .."}
-
-    ];
-    const links = [{source: 1, target: 2}, {source: 3, target: 2}, {source: 4, target: 2}, {
-        source: 4,
-        target: 5
-    }, {source: 2, target: 5}];
-
-    const _objects = nodes.filter(x => x.type === "object");
-    const _facts = nodes.filter(x => x.type === "fact");
-
-    _objects
-        .forEach(
-            function (d) {
-                d.labelWidth = objectWidth;
-                d.labelHeight = objectHeight;
-                d.objectWidth = d.labelWidth + 2 * innerPadding;
-                d.objectHeight = d.labelHeight + 2 * innerPadding;
-                d.outerBoundWidth = d.objectWidth + 2 * outerPadding;
-                d.outerBoundHeight = d.objectHeight + 2 * outerPadding;
-                d.width = d.outerBoundWidth;
-                d.height = d.outerBoundHeight;
-                d.centerX = function () { return this.x + this.outerBoundWidth / 2 };
-                d.centerY = function () { return this.y + this.outerBoundHeight / 2 };
-            }
-        );
-
-    const factGroup = svg.selectAll(".fact")
-        .data(_facts)
-        .enter().append("g")
-        .each(function(d){
-            d.width = objectWidth + 2 * innerPadding + 2 * outerPadding;
-            d.height = objectHeight + 2 * innerPadding + 2 * outerPadding;
-            d.factBoxWidth = d.roles * squareWidth;
-            d.factBoxHeight = squareWidth; // webstorm is pretty smart. :)
-            d.nameFactBoxWidth = d.factBoxWidth + 2 * innerPadding;
-            d.nameFactBoxHeight = d.factBoxHeight + 2 * innerPadding;
-            d.xFactBox = (d.width - d.factBoxWidth) / 2;
-            d.yFactBox = (d.height - d.factBoxHeight) / 2;
-        })
-        .call(d3cola.drag);
-
-    // outer shell
-    factGroup.append("rect")
-        .attr("width", d => d.width)
-        .attr("height", d => d.height)
-        .attr("rx", roundCorner)
-        .attr("ry", roundCorner)
-        .attr("fill", "lightblue");
-
-    factGroup.append("rect")
-        .attr("width", d =>d.factBoxWidth)
-        .attr("height", d=>d.factBoxHeight)
-        .attr("x", d => d.xFactBox)
-        .attr("y", d => d.yFactBox)
-        .attr("stroke", "black")
-        .attr("fill", "white");
-
-
-
-    function configureFactsWith(facts, nRoles){
-        const selected = factGroup.filter(d=>d.roles === nRoles);
-        for(let i=0; i!== nRoles; i++){
-            selected
-                .append("rect")
-                .attr("width", squareWidth)
-                .attr("height", squareWidth)
-                .attr("x", d => d.xFactBox + squareWidth * i)
-                .attr("y", d => d.yFactBox)
-                .attr("fill", "white")
-                .attr("stroke", "black");
+    function setNodesAndLinks(json, nodes, links){
+        for(let f of json){
+            const rolesInAFact =f.reads[0].roles;
+            const factNode = {name:f.name, type:"fact", roles:rolesInAFact.length};
+            nodes.push(factNode);
+            rolesInAFact.forEach(
+                function(r, i){
+                    if (nodes.findIndex((x)=>x.name === r) === -1){
+                        nodes.push({name: r, type:"object"});
+                    }
+                    links.push({source: nodes.findIndex((x)=> x.name === r),
+                        target: nodes.findIndex((x)=>x.name === factNode.name), "role":i+1})
+                }
+            );
         }
     }
-    for(let i=1; i!==8; i++){ configureFactsWith(factGroup, i); }
 
-    factGroup.append("rect")
-        .attr("width", d=>d.nameFactBoxWidth)
-        .attr("height", d=>d.nameFactBoxHeight)
-        .attr("x", d=> (d.width - d.nameFactBoxWidth) / 2)
-        .attr("y", d=> (d.height - d.nameFactBoxHeight) / 2)
-        .attr("rx", roundCorner)
-        .attr("ry", roundCorner)
-        .attr("fill", "none")
-        .attr("stroke", "black");
+    d3.json("graphdata/elementalViewMockData2.json", function(error, data)
+    {
 
-    //FACT NAME
-    factGroup.append("text")
-        .text(d=>(d.name) ? d.name : "")
-        .attr("class", "objectLabel")
-        .attr("x", d => d.width / 2)
-        .attr("y", d => d.height / 3);
+        debugger;
+        const nodes = [];
+        const links = [];
+        setNodesAndLinks(data, nodes, links);
+        const _objects = nodes.filter(x => x.type === "object");
+        const _facts = nodes.filter(x => x.type === "fact");
 
-    //FACT DESCRIPTION
-    factGroup.append("text")
-        .text(d=>(d.description) ? d.description : "")
-        .attr("class", "objectLabel")
-        .attr("x", d => d.width / 2)
-        .attr("y", d => d.height / 1.2);
+        _objects
+            .forEach(
+                function (d) {
+                    d.labelWidth = objectWidth;
+                    d.labelHeight = objectHeight;
+                    d.objectWidth = d.labelWidth + 2 * innerPadding;
+                    d.objectHeight = d.labelHeight + 2 * innerPadding;
+                    d.outerBoundWidth = d.objectWidth + 2 * outerPadding;
+                    d.outerBoundHeight = d.objectHeight + 2 * outerPadding;
+                    d.width = d.outerBoundWidth;
+                    d.height = d.outerBoundHeight;
+                    d.centerX = function () { return this.x + this.outerBoundWidth / 2 };
+                    d.centerY = function () { return this.y + this.outerBoundHeight / 2 };
+                }
+            );
 
-    const objectGroup = svg.selectAll(".object")
-        .data(_objects)
-        .enter().append("g")
-        .call(d3cola.drag);
+        const factGroup = svg.selectAll(".fact")
+            .data(_facts)
+            .enter().append("g")
+            .each(function(d){
+                d.width = objectWidth + 2 * innerPadding + 2 * outerPadding;
+                d.height = objectHeight + 2 * innerPadding + 2 * outerPadding;
+                d.factBoxWidth = d.roles * squareWidth;
+                d.factBoxHeight = squareWidth; // webstorm is pretty smart. :)
+                d.nameFactBoxWidth = d.factBoxWidth + 2 * innerPadding;
+                d.nameFactBoxHeight = d.factBoxHeight + 2 * innerPadding;
+                d.xFactBox = (d.width - d.factBoxWidth) / 2;
+                d.yFactBox = (d.height - d.factBoxHeight) / 2;
+                d.centerX = function(){ return this.x + this.width / 2};
+                d.centerY = function(){ return this.y + this.height / 2};
+            })
+            .call(d3cola.drag);
 
-    objectGroup.append("rect")
-        .attr("width", d => d.outerBoundWidth)
-        .attr("height", d => d.outerBoundHeight)
-        .attr("rx", roundCorner)
-        .attr("ry", roundCorner)
-        .attr("fill", "lightblue");
+        // outer shell
+        factGroup.append("rect")
+            .attr("width", d => d.width)
+            .attr("height", d => d.height)
+            .attr("rx", roundCorner)
+            .attr("ry", roundCorner)
+            .attr("fill", "white");
 
-    objectGroup.append("rect")
-        .attr("width", d => d.objectWidth)
-        .attr("height", d => d.objectHeight)
-        .attr("x", d => (d.outerBoundWidth - d.objectWidth) / 2)
-        .attr("y", d => (d.outerBoundHeight - d.objectHeight) / 2)
-        .attr("stroke", "black")
-        .attr("fill", "pink")
-        .attr("rx", roundCorner)
-        .attr("ry", roundCorner);
+        factGroup.append("rect")
+            .attr("width", d =>d.factBoxWidth)
+            .attr("height", d=>d.factBoxHeight)
+            .attr("x", d => d.xFactBox)
+            .attr("y", d => d.yFactBox)
+            .attr("stroke", "black")
+            .attr("fill", "white");
 
-    objectGroup.append("text")
-        .attr("dx", function (d) {
-            return (d.outerBoundWidth / 2)
-        })
-        .attr("dy", d => d.outerBoundHeight / 1.8)
-        .attr("class", "objectLabel")
-        .text(function (d) { return d.name; });
+        function configureFactsWith(facts, nRoles){
+            const selected = factGroup.filter(d=>d.roles === nRoles);
+            for(let i=0; i!== nRoles; i++){
+                selected
+                    .append("rect")
+                    .attr("width", squareWidth)
+                    .attr("height", squareWidth)
+                    .attr("x", d => d.xFactBox + squareWidth * i)
+                    .attr("y", d => d.yFactBox)
+                    .attr("fill", "white")
+                    .attr("stroke", "black");
+            }
+        }
+        for(let i=1; i!==8; i++){ configureFactsWith(factGroup, i); }
 
-    const link = svg.selectAll(".link")
-        .data(links)
-        .enter().append("line")
-        .attr("stroke", "black");
+        factGroup.append("rect")
+            .attr("width", d=>d.nameFactBoxWidth)
+            .attr("height", d=>d.nameFactBoxHeight)
+            .attr("x", d=> (d.width - d.nameFactBoxWidth) / 2)
+            .attr("y", d=> (d.height - d.nameFactBoxHeight) / 2)
+            .attr("rx", roundCorner)
+            .attr("ry", roundCorner)
+            .attr("fill", "none")
+            .attr("stroke", "black");
 
-    d3cola
-        .size([800, 600])
-        .nodes(nodes)
-        .links(links)
-        .on("tick", function () {
-            factGroup
-                .attr("transform", function(d){
-                    return "translate(" + (d.x) + "," + (d.y) + ")";
-                });
+        //FACT NAME
+        factGroup.append("text")
+            .text(d=>(d.name) ? d.name : "")
+            .attr("class", "objectLabel")
+            .attr("x", d => d.width / 2)
+            .attr("y", d => d.height / 3);
 
-            objectGroup
-                .attr("transform", function (d) {
-                    return "translate(" + (d.x) + "," + (d.y) + ")";
-                });
-            link
-                .attr("x1", (d) => d.source.centerX())
-                .attr("y1", (d) => d.source.centerY())
-                .attr("x2", (d) => d.target.centerX())
-                .attr("y2", (d) => d.target.centerY());
-        })
-        .start()
-        .on("end", function () { d3cola.jaccardLinkLengths(60, 0.5).start(); })
+        //FACT DESCRIPTION
+        factGroup.append("text")
+            .text(d=>(d.description) ? d.description : "")
+            .attr("class", "objectLabel")
+            .attr("x", d => d.width / 2)
+            .attr("y", d => d.height / 1.2);
+
+        const objectGroup = svg.selectAll(".object")
+            .data(_objects)
+            .enter().append("g")
+            .call(d3cola.drag);
+
+        objectGroup.append("rect")
+            .attr("width", d => d.outerBoundWidth)
+            .attr("height", d => d.outerBoundHeight)
+            .attr("rx", roundCorner)
+            .attr("ry", roundCorner)
+            .attr("fill", "white");
+
+        objectGroup.append("rect")
+            .attr("width", d => d.objectWidth)
+            .attr("height", d => d.objectHeight)
+            .attr("x", d => (d.outerBoundWidth - d.objectWidth) / 2)
+            .attr("y", d => (d.outerBoundHeight - d.objectHeight) / 2)
+            .attr("stroke", "black")
+            .attr("fill", "pink")
+            .attr("rx", roundCorner)
+            .attr("ry", roundCorner);
+
+        objectGroup.append("text")
+            .attr("dx", function (d) {
+                return (d.outerBoundWidth / 2)
+            })
+            .attr("dy", d => d.outerBoundHeight / 1.8)
+            .attr("class", "objectLabel")
+            .text(function (d) { return d.name; });
+
+        const link = svg.selectAll(".link")
+            .data(links)
+            .enter().append("line")
+            .attr("stroke", "black");
+
+        d3cola
+            .size([800, 600])
+            .nodes(nodes)
+            .links(links)
+            .on("tick", function () {
+                factGroup
+                    .attr("transform", function(d){
+                        return "translate(" + (d.x) + "," + (d.y) + ")";
+                    });
+
+                objectGroup
+                    .attr("transform", function (d) {
+                        return "translate(" + (d.x) + "," + (d.y) + ")";
+                    });
+                link
+                    .attr("x1", (d) => d.source.centerX())
+                    .attr("y1", (d) => d.source.centerY())
+                    .attr("x2", (d) => d.target.centerX())
+                    .attr("y2", (d) => d.target.centerY());
+            })
+            .start(20, 20, 20)
+            .on("end", function () {
+                if (rerun){
+                    d3cola.jaccardLinkLengths(60, 0.5).start(10, 10, 10);
+                    rerun = false
+                }
+            })
+
+    })
 
 </script>
 </body>

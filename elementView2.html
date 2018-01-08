@@ -95,9 +95,6 @@
         )
         .call(d3cola.drag);
 
-
-
-
     nodeGroup.append("rect")
         .attr("width", 50)
         .attr("height", 50)
@@ -114,7 +111,6 @@
         .attr("fill", "red")
         .attr("rx", 5)
         .attr("ry", 5);
-
 
     nodeGroup.append("text")
         .attr("dx", function(d){ return (d.width/2)})
