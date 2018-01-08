@@ -3,68 +3,26 @@
 <head>
     <title>fact based modeling (elemental view)</title>
     <style>
-        .background {
-            stroke: white;
-            stroke-width: 1px;
-            fill: white;
-        }
-
-        .object {
-            stroke: black;
-            stroke-width: 1.5px;
-            cursor: move;
-            fill: white;
-        }
-
-        .valueObject {
-            stroke: black;
-            stroke-width: 2px;
-            cursor: move;
-            fill: white;
-            stroke-dasharray: 10, 10, 10, 10;
-        }
-
-        .fact {
-            fill: none;
-            stroke: black;
-            stroke-width: 3px;
-        }
-
-        .factNamedFactBox {
-            stroke: black;
-            stroke-width: 3px;
-            fill: none;
-        }
-
-        .factRoleBox {
-            stroke: black;
-            stroke-width: 3px;
-            fill: none;
-        }
-
-        .link {
-            fill: none;
-            stroke: black;
-            stroke-width: 3px;
-            /*marker-end: url(#end-arrow);*/
-        }
-
-        .linkEndPoint {
-            fill: blueviolet;
-        }
-
-        .objectLabel {
+        .objectName {
             fill: black;
             font-family: Verdana;
             font-size: 8px;
+            font-weight:bold;
             text-anchor: middle;
             cursor: move;
         }
-
-        .factLabel {
+        .factName {
             fill: black;
             font-family: Verdana;
-            font-size: 1px;
+            font-weight: bold;
+            font-size: 7px;
+            text-anchor: middle;
+            cursor: move;
+        }
+        .factRead {
+            fill: black;
+            font-family: Verdana;
+            font-size: 6px;
             text-anchor: middle;
             cursor: move;
         }
@@ -77,8 +35,9 @@
 <script src="extern/cola.js"></script>
 <script>
 
-    const visWidth =800;
+    const visWidth = 800;
     const visHeight = 600;
+    const dataFile = "graphdata/elementalViewMockData2.json";
     const svg = d3.select("body").append("svg").attr("width", visWidth).attr("height", visHeight);
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
@@ -93,33 +52,33 @@
     const roundCorner = 5;
     let rerun = true;
 
-    function setNodesAndLinks(json, nodes, links){
-        for(let f of json){
-            const rolesInAFact =f.reads[0].roles;
-            const factNode = {name:f.name, type:"fact", roles:rolesInAFact.length};
+
+
+    function setNodesAndLinks(json, nodes, links) {
+        for (let f of json) {
+            const rolesInAFact = f.reads[0].roles;
+            const factNode = {name: f.name, type: "fact", roles: rolesInAFact.length, read: f.reads[0].text};
             nodes.push(factNode);
             rolesInAFact.forEach(
-                function(r, i){
-                    if (nodes.findIndex((x)=>x.name === r) === -1){
-                        nodes.push({name: r, type:"object"});
+                function (r, i) {
+                    if (nodes.findIndex((x) => x.name === r) === -1) {
+                        nodes.push({name: r, type: "object"});
                     }
-                    links.push({source: nodes.findIndex((x)=> x.name === r),
-                        target: nodes.findIndex((x)=>x.name === factNode.name), "role":i+1})
+                    links.push({
+                        source: nodes.findIndex((x) => x.name === r),
+                        target: nodes.findIndex((x) => x.name === factNode.name), "role": i + 1
+                    })
                 }
             );
         }
     }
 
-    d3.json("graphdata/elementalViewMockData2.json", function(error, data)
-    {
-
-        debugger;
+    d3.json(dataFile, function (error, data) {
         const nodes = [];
         const links = [];
         setNodesAndLinks(data, nodes, links);
         const _objects = nodes.filter(x => x.type === "object");
         const _facts = nodes.filter(x => x.type === "fact");
-
         _objects
             .forEach(
                 function (d) {
@@ -131,7 +90,7 @@
                     d.outerBoundHeight = d.objectHeight + 2 * outerPadding;
                     d.width = d.outerBoundWidth;
                     d.height = d.outerBoundHeight;
-                    d.centerX = function () { return this.x + this.outerBoundWidth / 2 };
+                    d.centerX = function () { return this.x + this.outerBoundWidth / 2  };
                     d.centerY = function () { return this.y + this.outerBoundHeight / 2 };
                 }
             );
@@ -139,7 +98,9 @@
         const factGroup = svg.selectAll(".fact")
             .data(_facts)
             .enter().append("g")
-            .each(function(d){
+            .each(function (d) {
+                d.x = 0;
+                d.y = 0;
                 d.width = objectWidth + 2 * innerPadding + 2 * outerPadding;
                 d.height = objectHeight + 2 * innerPadding + 2 * outerPadding;
                 d.factBoxWidth = d.roles * squareWidth;
@@ -148,13 +109,15 @@
                 d.nameFactBoxHeight = d.factBoxHeight + 2 * innerPadding;
                 d.xFactBox = (d.width - d.factBoxWidth) / 2;
                 d.yFactBox = (d.height - d.factBoxHeight) / 2;
-                d.centerX = function(){ return this.x + this.width / 2};
-                d.centerY = function(){ return this.y + this.height / 2};
+                // d.centerX = function(i){ return d.xFactBox + squareWidth / 2 + (i-1) * squareWidth};
+                // d.centerY = function(i){ return d.yFactBox + squareWidth / 2}
             })
             .call(d3cola.drag);
 
+        function distance(p1, p2) { return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)); }
+
         // outer shell
-        factGroup.append("rect")
+        factGroup.insert("line", "rect")
             .attr("width", d => d.width)
             .attr("height", d => d.height)
             .attr("rx", roundCorner)
@@ -162,16 +125,16 @@
             .attr("fill", "white");
 
         factGroup.append("rect")
-            .attr("width", d =>d.factBoxWidth)
-            .attr("height", d=>d.factBoxHeight)
+            .attr("width", d => d.factBoxWidth)
+            .attr("height", d => d.factBoxHeight)
             .attr("x", d => d.xFactBox)
             .attr("y", d => d.yFactBox)
             .attr("stroke", "black")
             .attr("fill", "white");
 
-        function configureFactsWith(facts, nRoles){
-            const selected = factGroup.filter(d=>d.roles === nRoles);
-            for(let i=0; i!== nRoles; i++){
+        function configureFactsWith(facts, nRoles) {
+            const selected = factGroup.filter(d => d.roles === nRoles);
+            for (let i = 0; i !== nRoles; i++) {
                 selected
                     .append("rect")
                     .attr("width", squareWidth)
@@ -182,13 +145,14 @@
                     .attr("stroke", "black");
             }
         }
-        for(let i=1; i!==8; i++){ configureFactsWith(factGroup, i); }
+
+        for (let i = 1; i !== 8; i++) { configureFactsWith(factGroup, i); }
 
         factGroup.append("rect")
-            .attr("width", d=>d.nameFactBoxWidth)
-            .attr("height", d=>d.nameFactBoxHeight)
-            .attr("x", d=> (d.width - d.nameFactBoxWidth) / 2)
-            .attr("y", d=> (d.height - d.nameFactBoxHeight) / 2)
+            .attr("width", d => d.nameFactBoxWidth)
+            .attr("height", d => d.nameFactBoxHeight)
+            .attr("x", d => (d.width - d.nameFactBoxWidth) / 2)
+            .attr("y", d => (d.height - d.nameFactBoxHeight) / 2)
             .attr("rx", roundCorner)
             .attr("ry", roundCorner)
             .attr("fill", "none")
@@ -196,17 +160,17 @@
 
         //FACT NAME
         factGroup.append("text")
-            .text(d=>(d.name) ? d.name : "")
-            .attr("class", "objectLabel")
+            .text(d => (d.name) ? d.name : "")
+            .attr("class", "factName")
             .attr("x", d => d.width / 2)
             .attr("y", d => d.height / 3);
 
         //FACT DESCRIPTION
         factGroup.append("text")
-            .text(d=>(d.description) ? d.description : "")
-            .attr("class", "objectLabel")
+            .text(d => (d.read) ? d.read : "")
+            .attr("class", "factRead")
             .attr("x", d => d.width / 2)
-            .attr("y", d => d.height / 1.2);
+            .attr("y", d => d.height / 1.35);
 
         const objectGroup = svg.selectAll(".object")
             .data(_objects)
@@ -235,42 +199,75 @@
                 return (d.outerBoundWidth / 2)
             })
             .attr("dy", d => d.outerBoundHeight / 1.8)
-            .attr("class", "objectLabel")
-            .text(function (d) { return d.name; });
+            .attr("class", "objectName")
+            .text(function (d) {
+                return d.name;
+            });
 
         const link = svg.selectAll(".link")
             .data(links)
             .enter().append("line")
             .attr("stroke", "black");
 
+
+        function getConnectedPoints (d, i) {
+            const x = d.x + d.xFactBox; // these are the offsets
+            const y = d.y + d.yFactBox;
+
+            const width = d.factBoxWidth;
+            const height = d.factBoxHeight;
+            const w = width / (d.roles * 2);
+            if (i === 1) { // if it is the leftmost element
+                if (d.roles === 1) {
+                    //debugger
+                    return [{x: x, y: y + height / 2},
+                        {x: x + width / 2, y: y},
+                        {x: x + width / 2, y: y + height},
+                        {x: x + width, y: y + height / 2}]
+                }
+                return [{x: x, y: y + height / 2}, {x: x + w, y: y}, {x: x + w, y: y + height}]
+            }
+            if (d.roles === i) {
+                return [{x: x + width - w, y: y}, {x: x + width, y: y + height / 2}, {x: x + width - w, y: y + height}]
+            }
+            const cx = x + w + (w * 2) * (i - 1);
+            return [{x: cx, y: y}, {x: cx, y: y + height}]
+        }
+
+
         d3cola
-            .size([800, 600])
+            .size([visWidth, visHeight])
             .nodes(nodes)
             .links(links)
             .on("tick", function () {
                 factGroup
-                    .attr("transform", function(d){
-                        return "translate(" + (d.x) + "," + (d.y) + ")";
-                    });
+                    .attr("transform", function (d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
 
                 objectGroup
-                    .attr("transform", function (d) {
-                        return "translate(" + (d.x) + "," + (d.y) + ")";
-                    });
+                    .attr("transform", function (d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
                 link
                     .attr("x1", (d) => d.source.centerX())
                     .attr("y1", (d) => d.source.centerY())
-                    .attr("x2", (d) => d.target.centerX())
-                    .attr("y2", (d) => d.target.centerY());
+                    .each(
+                        function(d){
+                            //debugger
+                            const sourcePoint = {x:d.source.centerX(), y:d.source.centerY()};
+                            const potentialPoints = getConnectedPoints(d.target, d.role);
+                            const distances = potentialPoints.map((p) => distance(p, sourcePoint));
+                            d.chosen = potentialPoints[distances.indexOf(Math.min(...distances))];
+                            //debugger
+                        }
+                    )
+                    .attr("x2", (d) => d.chosen.x)
+                    .attr("y2", (d) => d.chosen.y);
             })
-            .start(20, 20, 20)
+            .start(10, 10, 10)
             .on("end", function () {
-                if (rerun){
+                if (rerun) {
                     d3cola.jaccardLinkLengths(60, 0.5).start(10, 10, 10);
                     rerun = false
                 }
             })
-
     })
 
 </script>
