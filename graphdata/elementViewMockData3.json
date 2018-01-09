@@ -1,0 +1,314 @@
+[
+  {
+    "id": 47455067490480,
+    "name": "Sales Tax Rate",
+    "reads": [
+      {
+        "text": "{0} applies {1}",
+        "roles": [
+          "State Province",
+          "Tax Type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455063506160,
+    "name": "Country Region Currency",
+    "reads": [
+      {
+        "text": "{0} uses {1}",
+        "roles": [
+          "Country Region",
+          "Currency"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455058421780,
+    "name": "Employee Pay History",
+    "reads": [
+      {
+        "text": "pay of {0} was changed on {1}",
+        "roles": [
+          "Employee",
+          "Rate Change Date"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455053015700,
+    "name": "Person Phone",
+    "reads": [
+      {
+        "text": "{0} uses {1} number of {2}",
+        "roles": [
+          "Person",
+          "Phone",
+          "Phone Number Type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455068556420,
+    "name": "Product Document",
+    "reads": [
+      {
+        "text": "{0} is described by {1}",
+        "roles": [
+          "Product",
+          "Document"
+        ]
+      },
+      {
+        "text": "{0} applies to {1}",
+        "roles": [
+          "Document",
+          "Product"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455063797980,
+    "name": "Bill Of Materials",
+    "reads": [
+      {
+        "text": "{0} includes {1} from {2}",
+        "roles": [
+          "Product Assembly",
+          "Component",
+          "Start Date"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455062550080,
+    "name": "Special Offer Product",
+    "reads": [
+      {
+        "text": "{0} includes {1}",
+        "roles": [
+          "Special Offer",
+          "Product"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455061618480,
+    "name": "Product Review",
+    "reads": [
+      {
+        "text": "{0} was reviewed by {1} on {2}",
+        "roles": [
+          "Product",
+          "Reviewer Name",
+          "Review Date"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455036747520,
+    "name": "Product List Price History",
+    "reads": [
+      {
+        "text": "{0} was priced at {1}",
+        "roles": [
+          "Product",
+          "Start Date"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455054926620,
+    "name": "Business Entity Address",
+    "reads": [
+      {
+        "text": "{0} uses {1} as {2}",
+        "roles": [
+          "Business Entity",
+          "Address",
+          "Address Type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455054453120,
+    "name": "Employee Department History",
+    "reads": [
+      {
+        "text": "{0} started on {1} in {2} working {3}",
+        "roles": [
+          "Employee",
+          "Start Date",
+          "Department",
+          "Shift"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455051464260,
+    "name": "Product Model Illustration",
+    "reads": [
+      {
+        "text": "{0} has {1}",
+        "roles": [
+          "Product",
+          "Illustration"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455056601320,
+    "name": "Business Entity Contact",
+    "reads": [
+      {
+        "text": "{0} appoints {1} as {2}",
+        "roles": [
+          "Business Entity",
+          "Person",
+          "Contact Type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455067562740,
+    "name": "Product Product Photo",
+    "reads": [
+      {
+        "text": "{0} has {1}",
+        "roles": [
+          "Product",
+          "Product Photo"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455062200340,
+    "name": "Product Inventory",
+    "reads": [
+      {
+        "text": "{0} is available at {1}",
+        "roles": [
+          "Product",
+          "Location"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455067584300,
+    "name": "Person Credit Card",
+    "reads": [
+      {
+        "text": "{0} uses {1}",
+        "roles": [
+          "Person",
+          "Credit Card"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455053316320,
+    "name": "Sales Territory History",
+    "reads": [
+      {
+        "text": "{0} was assigned on {1} to {2}",
+        "roles": [
+          "Sales Person",
+          "Start Date",
+          "Sales Territory"
+        ]
+      },
+      {
+        "text": "{0} worked {1} from {2}",
+        "roles": [
+          "Sales Person",
+          "Sales Territory",
+          "Start Date"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455062612640,
+    "name": "Product Model Product Description Culture",
+    "reads": [
+      {
+        "text": "{0} has {1} for {2}",
+        "roles": [
+          "Product Model",
+          "Description",
+          "Culture"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455058128480,
+    "name": "Sales Order Header Sales Reason",
+    "reads": [
+      {
+        "text": "{0} has {1}",
+        "roles": [
+          "Sales Order",
+          "Sales Reason"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455066937860,
+    "name": "Product Vendor",
+    "reads": [
+      {
+        "text": "{0} is sourced from {1}",
+        "roles": [
+          "Product",
+          "Vendor"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455051705220,
+    "name": "Sales Person Quota History",
+    "reads": [
+      {
+        "text": "{0} had quota to {1}",
+        "roles": [
+          "Sales Person",
+          "Quota Date"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47455053819880,
+    "name": "Work Order Routing",
+    "reads": [
+      {
+        "text": "{0} activity on {1} involves {2}",
+        "roles": [
+          "Work Order",
+          "Product",
+          "Operation Sequence"
+        ]
+      }
+    ]
+  }
+]
+
