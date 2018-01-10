@@ -46,6 +46,8 @@
     find their optimal position, and the second pass tighten on the linkDistance, and so boundBoxes will push against each other to create
     a near optimal spacing.
 
+
+
     ** ToDo list **
 
     resolve the crosses of links on the fact types, applying some simple hurestics. something that will work in some cases, for example, two objects are
@@ -54,6 +56,10 @@
     another way would be to aim to spread the fact type evenly on both size, left and right. we can use reading of the fact type
     that has the entity type as the first argument or the last arguement, maybe use inequality constraints to layout them out.
     vertical constraints could be too heavy handed and easily run into pathological edge cases. There is definitely a lot of work in this area.
+
+    limitation
+    the boundbox for the facts and objects have to have the same dimensions for the overlay removing algorithm to work
+    correctly. Which is why for some of the long labels may stick outside of their boxes.
 
      */
     const blockColor = "none";
