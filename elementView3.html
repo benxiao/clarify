@@ -34,14 +34,14 @@
 <script src="extern/d3v4.js"></script>
 <script src="extern/cola.js"></script>
 <script>
-
-    const visWidth = 800;
-    const visHeight = 600;
-    const dataFile = "graphdata/elementalViewMockData2.json";
+    const blockColor = "none";
+    const visWidth = 1600;
+    const visHeight = 1400;
+    const dataFile = "graphdata/elementViewMockData3.json";
     const svg = d3.select("body").append("svg").attr("width", visWidth).attr("height", visHeight);
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
-        .jaccardLinkLengths(160, 0.5)
+        .jaccardLinkLengths(130, 0.5)
         .avoidOverlaps(true);
 
     const objectWidth = 70;
@@ -79,6 +79,12 @@
         setNodesAndLinks(data, nodes, links);
         const _objects = nodes.filter(x => x.type === "object");
         const _facts = nodes.filter(x => x.type === "fact");
+
+        const link = svg.selectAll(".link")
+            .data(links)
+            .enter().append("line")
+            .attr("stroke", "black");
+
         _objects
             .forEach(
                 function (d) {
@@ -109,20 +115,18 @@
                 d.nameFactBoxHeight = d.factBoxHeight + 2 * innerPadding;
                 d.xFactBox = (d.width - d.factBoxWidth) / 2;
                 d.yFactBox = (d.height - d.factBoxHeight) / 2;
-                // d.centerX = function(i){ return d.xFactBox + squareWidth / 2 + (i-1) * squareWidth};
-                // d.centerY = function(i){ return d.yFactBox + squareWidth / 2}
             })
             .call(d3cola.drag);
 
         function distance(p1, p2) { return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)); }
 
         // outer shell
-        factGroup.insert("line", "rect")
+        factGroup.append("rect")
             .attr("width", d => d.width)
             .attr("height", d => d.height)
             .attr("rx", roundCorner)
             .attr("ry", roundCorner)
-            .attr("fill", "white");
+            .attr("fill", blockColor);
 
         factGroup.append("rect")
             .attr("width", d => d.factBoxWidth)
@@ -182,7 +186,7 @@
             .attr("height", d => d.outerBoundHeight)
             .attr("rx", roundCorner)
             .attr("ry", roundCorner)
-            .attr("fill", "white");
+            .attr("fill", blockColor);
 
         objectGroup.append("rect")
             .attr("width", d => d.objectWidth)
@@ -190,7 +194,7 @@
             .attr("x", d => (d.outerBoundWidth - d.objectWidth) / 2)
             .attr("y", d => (d.outerBoundHeight - d.objectHeight) / 2)
             .attr("stroke", "black")
-            .attr("fill", "pink")
+            .attr("fill", "white")
             .attr("rx", roundCorner)
             .attr("ry", roundCorner);
 
@@ -204,11 +208,12 @@
                 return d.name;
             });
 
-        const link = svg.selectAll(".link")
-            .data(links)
-            .enter().append("line")
-            .attr("stroke", "black");
 
+        const dot = svg.selectAll(".dot")
+            .data(links)
+            .enter().append("circle")
+            .attr("fill", "purple")
+            .attr("r", "3");
 
         function getConnectedPoints (d, i) {
             const x = d.x + d.xFactBox; // these are the offsets
@@ -260,6 +265,10 @@
                     )
                     .attr("x2", (d) => d.chosen.x)
                     .attr("y2", (d) => d.chosen.y);
+
+                dot
+                    .attr("cx", d=>d.chosen.x)
+                    .attr("cy", d=>d.chosen.y)
             })
             .start(10, 10, 10)
             .on("end", function () {

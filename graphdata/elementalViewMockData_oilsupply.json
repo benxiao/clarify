@@ -1,0 +1,112 @@
+[
+  {
+    "id": 47190264913260,
+    "name": "Transport Route",
+    "reads": [
+      {
+        "text": "{0} transportation is available from {1} to {2}",
+        "roles": [
+          "Transport Method",
+          "Refinery",
+          "Region"
+        ]
+      },
+      {
+        "text": "{0} transportation is available to {1} from {2}",
+        "roles": [
+          "Transport Method",
+          "Region",
+          "Refinery"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47190291280180,
+    "name": "Regional Demand",
+    "reads": [
+      {
+        "text": "{0} in {1} will need {2} in {3}",
+        "roles": [
+          "Region",
+          "Supply Period",
+          "Product",
+          "Quantity"
+        ]
+      },
+      {
+        "text": "{0} will need {1} in {2} in {3}",
+        "roles": [
+          "Region",
+          "Product",
+          "Supply Period",
+          "Quantity"
+        ]
+      },
+      {
+        "text": "{0} will need {1} of {2} in {3}",
+        "roles": [
+          "Region",
+          "Quantity",
+          "Product",
+          "Supply Period"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47190264084100,
+    "name": "Acceptable Substitution",
+    "reads": [
+      {
+        "text": "{0} may be substituted by {1} in {2}",
+        "roles": [
+          "Product",
+          "Alternate Product",
+          "Season"
+        ]
+      },
+      {
+        "text": "{0} is an acceptable substitute for {1} in {2}",
+        "roles": [
+          "Alternate Product",
+          "Product",
+          "Season"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47190289194480,
+    "name": "Production Forecast",
+    "reads": [
+      {
+        "text": "{0} in {1} will make {2} in {3}",
+        "roles": [
+          "Refinery",
+          "Supply Period",
+          "Product",
+          "Quantity"
+        ]
+      },
+      {
+        "text": "{0} will make {1} in {2} in {3}",
+        "roles": [
+          "Refinery",
+          "Product",
+          "Supply Period",
+          "Quantity"
+        ]
+      },
+      {
+        "text": "{0} will make {1} of {2} in {3}",
+        "roles": [
+          "Refinery",
+          "Quantity",
+          "Product",
+          "Supply Period"
+        ]
+      }
+    ]
+  }
+]
