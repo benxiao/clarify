@@ -34,10 +34,13 @@
 <script src="extern/d3v4.js"></script>
 <script src="extern/cola.js"></script>
 <script>
+    /*
+    This is a
+     */
     const blockColor = "none";
     const visWidth = 1600;
     const visHeight = 1400;
-    const dataFile = "graphdata/elementViewMockData3.json";
+    const dataFile = "graphdata/elementalView_productreview.json";
     const svg = d3.select("body").append("svg").attr("width", visWidth).attr("height", visHeight);
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
@@ -194,6 +197,7 @@
             .attr("x", d => (d.outerBoundWidth - d.objectWidth) / 2)
             .attr("y", d => (d.outerBoundHeight - d.objectHeight) / 2)
             .attr("stroke", "black")
+            .attr("stroke-width", "2")
             .attr("fill", "white")
             .attr("rx", roundCorner)
             .attr("ry", roundCorner);
@@ -207,7 +211,6 @@
             .text(function (d) {
                 return d.name;
             });
-
 
         const dot = svg.selectAll(".dot")
             .data(links)
