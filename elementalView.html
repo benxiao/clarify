@@ -76,11 +76,24 @@
 <script src="extern/d3v4.js"></script>
 <script src="extern/cola.js"></script>
 <script>
+    /*
+        this file visualizes the elemental View in fact based modelling methodology, it draws 'objects' and 'facts'
+        the implementation is pretty straightforward.
+
+        basically json data pulled out the factify is parsed into nodes that contains both objects and facts, and links
+        that have objects and source node, and facts as the target node
+
+        One thing is worth mentioning is that there are a lot of moving parts for the facts, label for fact name, squares
+        for each roles and box for named fact types. in this version they are all moved in the tick function separately
+        causing some inefficieny and makes the tick function a little bit bloated", this very issue is addressed in
+        elementalView_group.html, where all these visual elements are packed into groups and moved as one as well.
+
+        One other interesting thing is that
+
+    */
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
         .jaccardLinkLengths(130, 0.2);
-
-    /* should be put into a separate file for code organization*/
 
     /*
         computing the aesthetically pleasing points that connects an edge and a fact
