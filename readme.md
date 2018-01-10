@@ -29,7 +29,7 @@ gives your good-enough default behaviour.
 
 #### future work
 * it uses static horizontal and vertical constraints, but the horizontal constraints 
-can be dynamically from nodes and links in your javascript with a little hint from the
+can be generated from nodes and links in your javascript with a little hint from the
 data itself. for example, the node can be assigned with stage number, and this can be
 used to compute the offset we should assign to it.
 ```
@@ -39,11 +39,11 @@ used to compute the offset we should assign to it.
    "offsets": [
         {
             "node": "0",
-            "offset": x + 200
+            "offset": x + 200 * stage_number
         },
         {
             "node": "2",
-            "offset": x + 400
+            "offset": x + 400 * stage_number
         },
         ....]
 }
