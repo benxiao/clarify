@@ -45,8 +45,7 @@ used to compute the offset we should assign to it.
             "node": "2",
             "offset": x + 400
         },
-        ....
-			]
+        ....]
 }
 ```
 
