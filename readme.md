@@ -3,82 +3,89 @@
 this project aims to visualize the model written in fact based modelling language CQL. Clarify provides
 examples to visualize all three layers in the model (model, composite and element).
 
-## Getting Started
 
+
+## Getting Started
 all the dependency has been included in extern folder. no extra dependency is needed.
 
+## Prerequisite
+* basic understanding of d3 force layout
+* entry-level javascript proficiency
+* a lot of curiosity and patience
+
+
+## Examples
+
+### Model View
+
+* for interactivity such as drag, you can do
 ```
-Give examples
+d3cola.call(d3cola.drag)
+```
+this very likely the old d3v3 api, for d3v4, the drag has been split into 
+three different callbacks, which gives you more fine-grained control, d3cola.drag
+gives your good-enough default behaviour.
+
+
+#### future work
+* it uses static horizontal and vertical constraints, but the horizontal constraints 
+can be dynamically from nodes and links in your javascript with a little hint from the
+data itself. for example, the node can be assigned with stage number, and this can be
+used to compute the offset we should assign to it.
+```
+{
+   "type": "alignment",
+   "axis": "x",
+   "offsets": [
+        {
+            "node": "0",
+            "offset": x + 200
+        },
+        {
+            "node": "2",
+            "offset": x + 400
+        },
+        ....
+			]
+}
 ```
 
-### Installing
+### Composite View
 
-A step by step series of examples that tell you have to get a development env running
+As mentioned in the source code, composite view resembles the UML diagram in OOP, technically
+it is nothing too special about it.
 
-Say what the step will be
-
+#### future work
+All the visual elements that are associated with one node should be put in one group and 
+move as one for performance and code clarity. on the other hand, the links should be kept the way 
+it is, as group visual elements on links will allowed them to be stretched, when they are
+dragged.
 ```
-Give the example
-```
+# will add a g tag for every node placeholder
+const group = vis.selectAll(".node").append("g")
+ 
+# will add a text label for every node group
+const text = group.append("text")
+ 
+# will add a cricle for every node group
+const circle = group.append("circle")
+ 
+# set their relative offset in the group
+circle.attr("x", d => d.x)
+ 
+# inside of tick
 
-And repeat
+{
+    
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
+}
 ```
 
-## Deployment
+### Elemental View
 
-Add additional notes about how to deploy this on a live system
+### Adding or removing visual elements
 
-## Built With
+### Groups
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+### Powergraph
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
