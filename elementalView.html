@@ -53,7 +53,7 @@
             fill: blueviolet;
         }
 
-        .objectName {
+        .objectLabel {
             fill: black;
             font-family: Verdana;
             font-size: 25px;
@@ -183,8 +183,7 @@
         return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
     }
 
-    const width = 1500, height = 700;
-
+    const width = 1600, height = 1300;
     const outer = d3.select("body").append("svg")
         .attr('width', width)
         .attr('height', height)
@@ -223,7 +222,6 @@
         for(let f of json){
             const rolesInAFact =f.reads[0].roles;
             const factNode = {name:f.name, type:"fact", roles:rolesInAFact.length};
-            debugger
             nodes.push(factNode);
             rolesInAFact.forEach(
                 function(r, i){
@@ -237,7 +235,7 @@
         }
     }
 
-    d3.json("graphdata/elementalViewMockData2.json", function (error, json) {
+    d3.json("graphdata/elementalView_productreview.json", function (error, json) {
 
         const margin = 10, pad = 12;
         const nodes = [];
