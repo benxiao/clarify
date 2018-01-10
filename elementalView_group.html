@@ -35,7 +35,26 @@
 <script src="extern/cola.js"></script>
 <script>
     /*
-    This is a
+    This reimplements the original elementalView
+    it introduces two new features. firstly it groups all the visual elements for each object and fact and move them as primitive
+    elements instead of moving text labels and svg shapes individually like previous example. It supposedly improves performance, but
+    it take it with a grain of salt, and it also makes the code shorter. For example, the tick function in this version is
+    a lot shorter than that of the previous example.
+
+    secondly, it uses a outer bound box to assert constraints on the visualization, it gives it a gridified feel. it achieve it
+    by running the simulation with two passes instead of one. First pass with loose link distance allows the node to spread and
+    find their optimal position, and the second pass tighten on the linkDistance, and so boundBoxes will push against each other to create
+    a near optimal spacing.
+
+    ** ToDo list **
+
+    resolve the crosses of links on the fact types, applying some simple hurestics. something that will work in some cases, for example, two objects are
+    crossed over and both of two only connects to one fact type, then "switch the label and links"
+
+    another way would be to aim to spread the fact type evenly on both size, left and right. we can use reading of the fact type
+    that has the entity type as the first argument or the last arguement, maybe use inequality constraints to layout them out.
+    vertical constraints could be too heavy handed and easily run into pathological edge cases. There is definitely a lot of work in this area.
+
      */
     const blockColor = "none";
     const visWidth = 1600;
@@ -54,8 +73,6 @@
     const outerPadding = 25;
     const roundCorner = 5;
     let rerun = true;
-
-
 
     function setNodesAndLinks(json, nodes, links) {
         for (let f of json) {
@@ -263,7 +280,6 @@
                             const potentialPoints = getConnectedPoints(d.target, d.role);
                             const distances = potentialPoints.map((p) => distance(p, sourcePoint));
                             d.chosen = potentialPoints[distances.indexOf(Math.min(...distances))];
-                            //debugger
                         }
                     )
                     .attr("x2", (d) => d.chosen.x)
@@ -273,7 +289,7 @@
                     .attr("cx", d=>d.chosen.x)
                     .attr("cy", d=>d.chosen.y)
             })
-            .start(10, 10, 10)
+            .start(5, 5, 5)
             .on("end", function () {
                 if (rerun) {
                     d3cola.jaccardLinkLengths(60, 0.5).start(10, 10, 10);

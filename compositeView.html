@@ -69,6 +69,15 @@
 <script src="extern/d3v4.js"></script>
 <script src="extern/cola.js"></script>
 <script>
+    /*
+        There are nothing too special about this particular visualization. this visualizes the composite layer. Visually
+        it resembles a UML diagrams in object-oriented programming. It is able to show relationships, and allow you to add
+        content to each "class".
+
+        In this example, all the
+
+    */
+
     const d3cola = cola.d3adaptor(d3);
     const width = 1200, height = 1000;
     const outer = d3.select("body").append("svg")
@@ -87,7 +96,7 @@
             {x: rect.x + rect.width, y: rect.y + rect.height / 2}
         ]
     }
-
+    // starMap generate a cross product of two lists
     function starMap(a1, a2) {
         let result = [];
         for (let e1 of a1) {

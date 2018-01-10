@@ -88,7 +88,9 @@
         causing some inefficieny and makes the tick function a little bit bloated", this very issue is addressed in
         elementalView_group.html, where all these visual elements are packed into groups and moved as one as well.
 
-        One other interesting thing is that
+        One other interesting thing is that node dimension depends on the font size and text length, so in order to get
+        the text width and height, a temporal set of the text labels are inserted into html with css style applied, then
+        the width and height can be obtained by calling the bound box of the label.
 
     */
     const d3cola = cola.d3adaptor(d3)
