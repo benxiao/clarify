@@ -79,7 +79,7 @@
     const blockColor = "none";
     const visWidth = 1600;
     const visHeight = 1400;
-    const dataFile = "graphdata/elementalView_productreview.json";
+    const dataFile = "graphdata/factify.json";
     const svg = d3.select("body").append("svg").attr("width", visWidth).attr("height", visHeight);
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
@@ -119,7 +119,9 @@
                 }
             );
         }
+        debugger
     }
+
 
 
     d3.json(dataFile, function (error, data) {
@@ -169,6 +171,12 @@
                 d.nameFactBoxHeight = d.factBoxHeight + 2 * innerPadding;
                 d.xFactBox = (d.width - d.factBoxWidth) / 2;
                 d.yFactBox = (d.height - d.factBoxHeight) / 2;
+                d.centerX = function () {
+                    return this.x + this.width / 2
+                };
+                d.centerY = function () {
+                    return this.y + this.height / 2
+                }
             })
             .call(d3cola.drag);
 
