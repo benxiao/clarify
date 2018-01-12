@@ -10,6 +10,10 @@
             font-weight:bold;
             text-anchor: middle;
             cursor: move;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         .factName {
             fill: black;
@@ -18,6 +22,10 @@
             font-size: 7px;
             text-anchor: middle;
             cursor: move;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         .factRead {
             fill: black;
@@ -25,6 +33,10 @@
             font-size: 6px;
             text-anchor: middle;
             cursor: move;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
     </style>
@@ -65,7 +77,7 @@
     const blockColor = "none";
     const visWidth = 1600;
     const visHeight = 1400;
-    const dataFile = "graphdata/data3.json";
+    const dataFile = "graphdata/elementalView_productreview.json";
     const svg = d3.select("body").append("svg").attr("width", visWidth).attr("height", visHeight);
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
@@ -81,18 +93,22 @@
     let rerun = true;
 
     function setNodesAndLinks(json, nodes, links) {
-        for (let f of json) {
+        for (let f of json){
             const rolesInAFact = f.reads[0].roles;
             const factNode = {name: f.name, type: "fact", roles: rolesInAFact.length, read: f.reads[0].text};
             nodes.push(factNode);
+        }
+        for (let f of json) {
+            const rolesInAFact = f.reads[0].roles;
+            //nodes.push(factNode);
             rolesInAFact.forEach(
                 function (r, i) {
                     if (nodes.findIndex((x) => x.name === r) === -1) {
                         nodes.push({name: r, type: "object"});
                     }
                     links.push({
-                        source: nodes.findIndex((x) => x.name === r), //needs to be fixed!!!!
-                        target: nodes.findIndex((x)=>(x.name === factNode.name) & (x.type === "fact")),
+                        source: nodes.findIndex((x) => x.name === r),
+                        target: nodes.findIndex((x) => (x.name === f.name) & (x.type === "fact")), // name by itself is not enough to be an identifier
                         role: i + 1
                     })
                 }
@@ -127,6 +143,8 @@
                     d.outerBoundHeight = d.objectHeight + 2 * outerPadding;
                     d.width = d.outerBoundWidth;
                     d.height = d.outerBoundHeight;
+                    d.centerX = function(){ return this.x + this.width / 2};
+                    d.centerY = function(){ return this.y + this.height / 2};
 
                 }
             );
