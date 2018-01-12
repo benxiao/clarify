@@ -54,6 +54,7 @@
     const colaForce = cola.d3adaptor(d3)
         .linkDistance(300)
         .convergenceThreshold(threshold)
+        .groupCompactness(1e-9)
         .avoidOverlaps(true)
         .size([width, height]);
 

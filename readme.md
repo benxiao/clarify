@@ -161,7 +161,8 @@ current data and crashes. It is a cheap hack, as the rootGroup is private instan
 its public api, but at the moment, there is no clear or rest function on the model.
 
 #### use case
-power graph can be used to model multiple disconnected process chain with popups, however 
+power graph can be used to model multiple disconnected process chain with popups, however at the moment,
+it is only what it is good for, it breaks down dealing with non-linear situations.
 
 
 

@@ -82,7 +82,14 @@
         .convergenceThreshold(0.1)
         .linkDistance(9)
         .avoidOverlaps(true);
-    const nodes = [{name: "A", height:50, width:60}, {name: "B", height:80, width:80}, {name: "D", height:30, width:40}];
+    const nodes = [
+        {name: "A", height:50, width:60},
+        {name: "B", height:80, width:80},
+        {name: "C", height:30, width:40},
+        {name: "D", height:30, width:30, fact:1, role:1},
+        {name: "E", height:30, width:30, fact:1, role:2},
+        {name: "F", height:30, width:30, fact:1, role:3}
+    ];
     const links = [{source: 0, target: 1}, {source: 1, target: 2}];
     const nodeGroup = svg.selectAll(".node")
         .data(nodes)
@@ -90,8 +97,8 @@
         .call(d3cola.drag);
 
     nodeGroup.append("rect")
-        .attr("width", d=>d.width)
-        .attr("height", d=>d.height)
+        .attr("width", d => d.width)
+        .attr("height",d => d.height)
         .attr("rx", 5)
         .attr("ry", 5)
         .attr("fill", "lightblue");
@@ -100,7 +107,6 @@
         .data(links)
         .enter().append("line")
         .attr("stroke", "black");
-
     d3cola
         .size([800, 600])
         .nodes(nodes)

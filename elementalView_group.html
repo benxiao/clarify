@@ -65,7 +65,7 @@
     const blockColor = "none";
     const visWidth = 1600;
     const visHeight = 1400;
-    const dataFile = "graphdata/elementalView_productreview.json";
+    const dataFile = "graphdata/data3.json";
     const svg = d3.select("body").append("svg").attr("width", visWidth).attr("height", visHeight);
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
@@ -91,13 +91,18 @@
                         nodes.push({name: r, type: "object"});
                     }
                     links.push({
-                        source: nodes.findIndex((x) => x.name === r),
-                        target: nodes.findIndex((x) => x.name === factNode.name), "role": i + 1
+                        source: nodes.findIndex((x) => x.name === r), //needs to be fixed!!!!
+                        target: nodes.findIndex((x)=>(x.name === factNode.name) & (x.type === "fact")),
+                        role: i + 1
                     })
                 }
             );
         }
     }
+    function centerX(d){ return d.x + d.width / 2 }
+
+    function centerY(d){ return d.y + d.height / 2 }
+
 
     d3.json(dataFile, function (error, data) {
         const nodes = [];
@@ -122,8 +127,7 @@
                     d.outerBoundHeight = d.objectHeight + 2 * outerPadding;
                     d.width = d.outerBoundWidth;
                     d.height = d.outerBoundHeight;
-                    d.centerX = function () { return this.x + this.outerBoundWidth / 2  };
-                    d.centerY = function () { return this.y + this.outerBoundHeight / 2 };
+
                 }
             );
 
@@ -277,18 +281,25 @@
                 objectGroup
                     .attr("transform", function (d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
                 link
-                    .attr("x1", (d) => d.source.centerX())
-                    .attr("y1", (d) => d.source.centerY())
+                    .attr("x1", function(d){
+                        //debugger
+                        return centerX(d.source);
+                    })
+                    .attr("y1", (d) => centerY(d.source))
                     .each(
                         function(d){
                             //debugger
-                            const sourcePoint = {x:d.source.centerX(), y:d.source.centerY()};
+                            const sourcePoint = {x:centerX(d.source), y:centerY(d.source)};
                             const potentialPoints = getConnectedPoints(d.target, d.role);
                             const distances = potentialPoints.map((p) => distance(p, sourcePoint));
                             d.chosen = potentialPoints[distances.indexOf(Math.min(...distances))];
+                            // if (!d.chosen){
+                            //     debugger
+                            // }
                         }
                     )
-                    .attr("x2", (d) => d.chosen.x)
+                    .attr("x2", function(d){
+                        return d.chosen.x })
                     .attr("y2", (d) => d.chosen.y);
 
                 dot

@@ -1,0 +1,594 @@
+[
+  {
+    "id": 47281460242460,
+    "name": "Topic",
+    "reads": [
+      {
+        "text": "{0} understands {1}",
+        "roles": [
+          "Group",
+          "Aspect"
+        ]
+      },
+      {
+        "text": "{0} is understood by {1}",
+        "roles": [
+          "Aspect",
+          "Group"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281446385080,
+    "name": "Denotation Alias",
+    "reads": [
+      {
+        "text": "{0} aliases {1}",
+        "roles": [
+          "Import",
+          "Denotation"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281453708960,
+    "name": "Removal",
+    "reads": [
+      {
+        "text": "{0} removes {1}",
+        "roles": [
+          "Delta",
+          "Concept"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281480427240,
+    "name": "Role List Role",
+    "reads": [
+      {
+        "text": "{0} has role in {1} position",
+        "roles": [
+          "Role List",
+          "Ordinal"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281478463280,
+    "name": "Dataflow FIDL",
+    "reads": [
+      {
+        "text": "{0} holds {1}",
+        "roles": [
+          "Dataflow Version",
+          "FIDL File"
+        ]
+      },
+      {
+        "text": "{0} is of {1}",
+        "roles": [
+          "FIDL File",
+          "Dataflow Version"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281483950200,
+    "name": "Import",
+    "reads": [
+      {
+        "text": "{0} imports {1}",
+        "roles": [
+          "Topic",
+          "Precursor Topic"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281454082560,
+    "name": "Reading",
+    "reads": [
+      {
+        "text": "{0} is described by {1}",
+        "roles": [
+          "Fact Type",
+          "Reading String"
+        ]
+      },
+      {
+        "text": "{0} describes {1}",
+        "roles": [
+          "Reading String",
+          "Fact Type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281481355780,
+    "name": "Unit Singular Name",
+    "reads": [
+      {
+        "text": "{0} assigns {1} {2}",
+        "roles": [
+          "Topic",
+          "Unit",
+          "Singular Name"
+        ]
+      },
+      {
+        "text": "{0} in {1} is for {2}",
+        "roles": [
+          "Singular Name",
+          "Topic",
+          "Unit"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281484133700,
+    "name": "Index Field",
+    "reads": [
+      {
+        "text": "{0} in {1} position contains {2}",
+        "roles": [
+          "Index",
+          "Ordinal",
+          "Column"
+        ]
+      },
+      {
+        "text": "{0} contains {1} in {2} position",
+        "roles": [
+          "Index",
+          "Column",
+          "Ordinal"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281482323140,
+    "name": "Reading Role Order",
+    "reads": [
+      {
+        "text": "{0} has {1} in {2} position",
+        "roles": [
+          "Reading",
+          "Role",
+          "Ordinal"
+        ]
+      },
+      {
+        "text": "{0} position in {1} is filled by {2}",
+        "roles": [
+          "Ordinal",
+          "Reading",
+          "Role"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281482305980,
+    "name": "Constrained Role",
+    "reads": [
+      {
+        "text": "{0} applies to {1} role",
+        "roles": [
+          "Constraint",
+          "Ordinal"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281462201100,
+    "name": "Unit Plural Name",
+    "reads": [
+      {
+        "text": "{0} assigns {1} {2}",
+        "roles": [
+          "Topic",
+          "Plural Named Unit",
+          "Plural Name"
+        ]
+      },
+      {
+        "text": "{0} in {1} is used for {2}",
+        "roles": [
+          "Plural Name",
+          "Topic",
+          "Plural Named Unit"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281482226580,
+    "name": "Role Naming",
+    "reads": [
+      {
+        "text": "{0} applies to {1}",
+        "roles": [
+          "Denotation",
+          "Role"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281455882280,
+    "name": "Denotation",
+    "reads": [
+      {
+        "text": "{0} applies {1}",
+        "roles": [
+          "Topic",
+          "Name"
+        ]
+      },
+      {
+        "text": "{0} is used in {1}",
+        "roles": [
+          "Name",
+          "Topic"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281460147760,
+    "name": "Derivation",
+    "reads": [
+      {
+        "text": "{0} is derived from {1}",
+        "roles": [
+          "Derived Unit",
+          "Base Unit"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281480019120,
+    "name": "Dataflow",
+    "reads": [
+      {
+        "text": "{0} populates {1} from {2}",
+        "roles": [
+          "Project",
+          "Target Datastore",
+          "Source Datastore"
+        ]
+      },
+      {
+        "text": "{0} transforms {1} into {2}",
+        "roles": [
+          "Project",
+          "Source Datastore",
+          "Target Datastore"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281481453220,
+    "name": "Experiment",
+    "reads": [
+      {
+        "text": "{0} is working on {1}",
+        "roles": [
+          "Person",
+          "Project"
+        ]
+      },
+      {
+        "text": "{0} has unsaved work by {1}",
+        "roles": [
+          "Project",
+          "Person"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281455398180,
+    "name": "Value Type Parameter",
+    "reads": [
+      {
+        "text": "{0} has facet called {1}",
+        "roles": [
+          "Value Type",
+          "Name"
+        ]
+      },
+      {
+        "text": "{0} is a facet of {1}",
+        "roles": [
+          "Name",
+          "Value Type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281482071300,
+    "name": "Table Model Part",
+    "reads": [
+      {
+        "text": "{0} has {1} defined by {2}",
+        "roles": [
+          "Table Model",
+          "Table Model Part Type",
+          "CSV File"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281482366760,
+    "name": "Project Datastore",
+    "reads": [
+      {
+        "text": "{0} involves {1}",
+        "roles": [
+          "Project",
+          "Datastore"
+        ]
+      },
+      {
+        "text": "{0} is involved in {1}",
+        "roles": [
+          "Datastore",
+          "Project"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281482585480,
+    "name": "Read Access Grant",
+    "reads": [
+      {
+        "text": "{0} may view {1}",
+        "roles": [
+          "Viewer",
+          "Project"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281480235700,
+    "name": "Addition",
+    "reads": [
+      {
+        "text": "{0} adds {1}",
+        "roles": [
+          "Delta",
+          "Concept"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281487873200,
+    "name": "Role Played",
+    "reads": [
+      {
+        "text": "{0} is played in {1}",
+        "roles": [
+          "Role",
+          "Fact"
+        ]
+      },
+      {
+        "text": "{0} includes {1}",
+        "roles": [
+          "Fact",
+          "Role"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281481061620,
+    "name": "Fluency",
+    "reads": [
+      {
+        "text": "{0} understands {1}",
+        "roles": [
+          "Speaker",
+          "Dialect"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281479651680,
+    "name": "Datastore FIML",
+    "reads": [
+      {
+        "text": "{0} binds {1} to {2}",
+        "roles": [
+          "Datastore Version",
+          "Name",
+          "FIML File"
+        ]
+      },
+      {
+        "text": "{0} holds {1} called {2}",
+        "roles": [
+          "Datastore Version",
+          "FIML File",
+          "Name"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281448888420,
+    "name": "Type Inheritance",
+    "reads": [
+      {
+        "text": "{0} is a subtype of {1}",
+        "roles": [
+          "Subtype",
+          "Supertype"
+        ]
+      },
+      {
+        "text": "{0} is a supertype of {1}",
+        "roles": [
+          "Supertype",
+          "Subtype"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281480555420,
+    "name": "Allowed Range",
+    "reads": [
+      {
+        "text": "{0} allows {1}",
+        "roles": [
+          "Value Constraint",
+          "Value Range"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281485950180,
+    "name": "Value Type Parameter Restriction",
+    "reads": [
+      {
+        "text": "{0} applies {1}",
+        "roles": [
+          "Value Type",
+          "Value Type Parameter"
+        ]
+      },
+      {
+        "text": "{0} applies to {1}",
+        "roles": [
+          "Value Type Parameter",
+          "Value Type"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281486895200,
+    "name": "Identification",
+    "reads": [
+      {
+        "text": "{0} prefers {1} to identify {2}",
+        "roles": [
+          "Topic",
+          "Preferred Identifier",
+          "Entity Type"
+        ]
+      },
+      {
+        "text": "{0} identifies {1} for the purposes of {2}",
+        "roles": [
+          "Preferred Identifier",
+          "Entity Type",
+          "Topic"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281484592260,
+    "name": "Delta",
+    "reads": [
+      {
+        "text": "{0} makes changes in {1} position",
+        "roles": [
+          "Experiment",
+          "Ordinal"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281483551320,
+    "name": "Facet",
+    "reads": [
+      {
+        "text": "{0} sees {1}",
+        "roles": [
+          "Aspect",
+          "Concept"
+        ]
+      },
+      {
+        "text": "{0} is relevant to {1}",
+        "roles": [
+          "Concept",
+          "Aspect"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281480038060,
+    "name": "Preference",
+    "reads": [
+      {
+        "text": "{0} sets {1} to {2}",
+        "roles": [
+          "Person",
+          "Setting",
+          "Setting Value"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281481338080,
+    "name": "Membership",
+    "reads": [
+      {
+        "text": "{0} includes {1}",
+        "roles": [
+          "Group",
+          "Person"
+        ]
+      },
+      {
+        "text": "{0} is a member of {1}",
+        "roles": [
+          "Person",
+          "Group"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47281452820160,
+    "name": "Role List",
+    "reads": [
+      {
+        "text": "{0} has rolelist in {1} position",
+        "roles": [
+          "Set Constraint",
+          "Ordinal"
+        ]
+      }
+    ]
+  }
+]
+
