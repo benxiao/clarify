@@ -72,33 +72,45 @@
     </style>
 </head>
 <body>
-<h1>Elemental View</h1>
+<h1>Elementarain View</h1>  <!-- suggested by Clifford, maybe I mispelled it? -->
 <script src="extern/d3v4.js"></script>
 <script src="extern/cola.js"></script>
 <script>
+    /*
+    this file shows that overlap remval still
+     */
+    const svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", 800)
+        .attr("height", 600);
 
-    const svg = d3.select("body").append("svg").attr("width", 800).attr("height", 600);
     const d3cola = cola.d3adaptor(d3)
         .convergenceThreshold(0.1)
         .linkDistance(9)
         .avoidOverlaps(true);
     const nodes = [
-        {name: "A", height:50, width:60},
-        {name: "B", height:80, width:80},
-        {name: "C", height:30, width:40},
-        {name: "D", height:30, width:30, fact:1, role:1},
-        {name: "E", height:30, width:30, fact:1, role:2},
-        {name: "F", height:30, width:30, fact:1, role:3}
+        {name: "A", height: 50, width: 60, type: "object"},
+        {name: "B", height: 80, width: 80, type: "object"},
+        {name: "C", height: 30, width: 40, type: "object"},
+        {name: "D", height: 30, width: 30, fact: 0, role: 1, type: "fact"},
+        {name: "E", height: 30, width: 30, fact: 0, role: 2, type: "fact"},
+        {name: "F", height: 30, width: 30, fact: 0, role: 3, type: "fact"}
     ];
+
+    const constraints = [];
+
+    const objects = nodes.filter(x => x.type === "object");
+    const facts = nodes.filter(x => x.type === "fact");
     const links = [{source: 0, target: 1}, {source: 1, target: 2}];
     const nodeGroup = svg.selectAll(".node")
-        .data(nodes)
+        .data(objects)
         .enter().append("g")
         .call(d3cola.drag);
 
     nodeGroup.append("rect")
         .attr("width", d => d.width)
-        .attr("height",d => d.height)
+        .attr("height", d => d.height)
         .attr("rx", 5)
         .attr("ry", 5)
         .attr("fill", "lightblue");
@@ -113,7 +125,9 @@
         .links(links)
         .on("tick", function () {
             nodeGroup
-                 .attr("transform", function(d){ return "translate("+(d.x - d.width / 2)+","+(d.y - d.height / 2)+")"});
+                .attr("transform", function (d) {
+                    return "translate(" + (d.x - d.width / 2) + "," + (d.y - d.height / 2) + ")"
+                });
             link
                 .attr("x1", (d) => d.source.x)
                 .attr("y1", (d) => d.source.y)

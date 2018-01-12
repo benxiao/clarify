@@ -7,7 +7,7 @@
             fill: black;
             font-family: Verdana;
             font-size: 7px;
-            font-weight:bold;
+            font-weight: bold;
             text-anchor: middle;
             cursor: move;
             -webkit-user-select: none;
@@ -15,6 +15,7 @@
             -ms-user-select: none;
             user-select: none;
         }
+
         .factName {
             fill: black;
             font-family: Verdana;
@@ -27,6 +28,7 @@
             -ms-user-select: none;
             user-select: none;
         }
+
         .factRead {
             fill: black;
             font-family: Verdana;
@@ -93,11 +95,14 @@
     let rerun = true;
 
     function setNodesAndLinks(json, nodes, links) {
-        for (let f of json){
-            const rolesInAFact = f.reads[0].roles;
+        // add all the fact types in a node list, so it is referred by another fact type, no object type will be created
+        for (let f of json) {
+
+            const rolesInAFact = f.reads[0].roles; // this is kinda ugly, but necessary for now
             const factNode = {name: f.name, type: "fact", roles: rolesInAFact.length, read: f.reads[0].text};
             nodes.push(factNode);
         }
+
         for (let f of json) {
             const rolesInAFact = f.reads[0].roles;
             //nodes.push(factNode);
@@ -115,9 +120,6 @@
             );
         }
     }
-    function centerX(d){ return d.x + d.width / 2 }
-
-    function centerY(d){ return d.y + d.height / 2 }
 
 
     d3.json(dataFile, function (error, data) {
@@ -143,8 +145,12 @@
                     d.outerBoundHeight = d.objectHeight + 2 * outerPadding;
                     d.width = d.outerBoundWidth;
                     d.height = d.outerBoundHeight;
-                    d.centerX = function(){ return this.x + this.width / 2};
-                    d.centerY = function(){ return this.y + this.height / 2};
+                    d.centerX = function () {
+                        return this.x + this.width / 2
+                    };
+                    d.centerY = function () {
+                        return this.y + this.height / 2
+                    };
 
                 }
             );
@@ -166,7 +172,9 @@
             })
             .call(d3cola.drag);
 
-        function distance(p1, p2) { return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)); }
+        function distance(p1, p2) {
+            return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+        }
 
         // outer shell
         factGroup.append("rect")
@@ -197,8 +205,11 @@
                     .attr("stroke", "black");
             }
         }
+
         // assume a fact types will have less than 8 roles directly connected to it.
-        for (let i = 1; i !== 8; i++) { configureFactsWith(factGroup, i); }
+        for (let i = 1; i !== 8; i++) {
+            configureFactsWith(factGroup, i);
+        }
 
         factGroup.append("rect")
             .attr("width", d => d.nameFactBoxWidth)
@@ -263,7 +274,7 @@
             .attr("fill", "purple")
             .attr("r", "3");
 
-        function getConnectedPoints (d, i) {
+        function getConnectedPoints(d, i) {
             const x = d.x + d.xFactBox; // these are the offsets
             const y = d.y + d.yFactBox;
 
@@ -294,20 +305,21 @@
             .links(links)
             .on("tick", function () {
                 factGroup
-                    .attr("transform", function (d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
+                    .attr("transform", function (d) {
+                        return "translate(" + (d.x) + "," + (d.y) + ")";
+                    });
 
                 objectGroup
-                    .attr("transform", function (d) { return "translate(" + (d.x) + "," + (d.y) + ")"; });
+                    .attr("transform", function (d) {
+                        return "translate(" + (d.x) + "," + (d.y) + ")";
+                    });
                 link
-                    .attr("x1", function(d){
-                        //debugger
-                        return centerX(d.source);
-                    })
-                    .attr("y1", (d) => centerY(d.source))
+                    .attr("x1", (d) => d.source.centerX())
+                    .attr("y1", d => d.source.centerY())
                     .each(
-                        function(d){
+                        function (d) {
                             //debugger
-                            const sourcePoint = {x:centerX(d.source), y:centerY(d.source)};
+                            const sourcePoint = {x: d.source.centerX(), y: d.source.centerY()};
                             const potentialPoints = getConnectedPoints(d.target, d.role);
                             const distances = potentialPoints.map((p) => distance(p, sourcePoint));
                             d.chosen = potentialPoints[distances.indexOf(Math.min(...distances))];
@@ -316,15 +328,16 @@
                             // }
                         }
                     )
-                    .attr("x2", function(d){
-                        return d.chosen.x })
+                    .attr("x2", function (d) {
+                        return d.chosen.x
+                    })
                     .attr("y2", (d) => d.chosen.y);
 
                 dot
-                    .attr("cx", d=>d.chosen.x)
-                    .attr("cy", d=>d.chosen.y)
+                    .attr("cx", d => d.chosen.x)
+                    .attr("cy", d => d.chosen.y)
             })
-            .start(5, 5, 5)
+            .start(2, 2, 2)
             .on("end", function () {
                 if (rerun) {
                     d3cola
